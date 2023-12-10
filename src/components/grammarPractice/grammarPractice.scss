@@ -1,0 +1,51 @@
+.grammarPracticeContainer {
+    .grammarHeader {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 30px;
+    }
+
+    .practiceContainer {
+        cursor: pointer;
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        padding-left: 50px;
+        padding-bottom: 10px;
+        border-bottom: 0.5px solid #495057;
+
+        &:hover {
+            background-color: gainsboro;
+            transition: background-color 0.3s ease;
+
+        }
+
+        .questionInfo {
+            width: 25%;
+        }
+
+        .practiceContent {
+            display: flex;
+            width: 60%;
+            flex-direction: column;
+            justify-content: flex-start;
+
+
+
+            .practiceTitle {
+                font-weight: 400;
+                font-size: 16px;
+            }
+
+            .practiceLevel {
+                font-size: 13px;
+            }
+        }
+
+        .practiceStatus {
+            display: flex;
+            align-items: center;
+            margin-left: 25%;
+        }
+    }
+}

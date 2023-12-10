@@ -1,0 +1,35 @@
+.levelContentContainer {
+    padding-top: 20px;
+
+    .levelContentItems {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+
+
+        .questionInfo {
+            width: 25%;
+        }
+
+        .progress {
+            display: flex;
+            width: 60%;
+            position: relative;
+            align-items: center;
+
+            .progressPin {
+                position: absolute;
+                margin-top: -32px;
+                margin-left: -28px;
+            }
+        }
+
+        .practiceBtn {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+}

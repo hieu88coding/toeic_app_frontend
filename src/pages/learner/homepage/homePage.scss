@@ -1,0 +1,10 @@
+.homePageContainer {
+    padding-top: 20px;
+    width: 70%;
+    margin: 0 auto;
+
+    .homePageContent {
+        display: flex;
+        flex-direction: row;
+    }
+}

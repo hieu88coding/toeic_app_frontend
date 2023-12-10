@@ -1,0 +1,64 @@
+.topbarContainer {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .06);
+    width: 100%;
+    background-color: white;
+    padding: 15px 20px;
+    height: 48px;
+    border: 1px solid #dee2e6;
+
+    .topBarBanner {
+        width: 70%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .topBarLogo {
+            display: flex;
+            align-items: center;
+        }
+
+        .topBarRight {
+            width: 30%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            .topBarContact {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                border-right: 1px solid gray;
+            }
+
+            .topBarInfo {
+                width: 50%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+
+                .topBarName {
+                    width: 50%;
+
+                }
+
+                .topBarAvatar {
+                    img {
+                        width: 48px;
+                        height: 100%;
+                        border-radius: 50%;
+                        border: 1px solid black;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+
+    }
+}
