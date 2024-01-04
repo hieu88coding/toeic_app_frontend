@@ -3,6 +3,19 @@
         display: flex;
         flex-direction: row;
         margin-bottom: 30px;
+
+        .progress {
+            display: flex;
+            width: 90%;
+            position: relative;
+            align-items: center;
+
+            .progressPin {
+                position: absolute;
+                margin-top: -32px;
+                margin-left: -28px;
+            }
+        }
     }
 
     .practiceContainer {
@@ -20,9 +33,6 @@
 
         }
 
-        .questionInfo {
-            width: 25%;
-        }
 
         .practiceContent {
             display: flex;

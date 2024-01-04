@@ -1,4 +1,4 @@
-import "./topbar.scss";
+import "./adminHeader.scss";
 import { useEffect, useState } from "react";
 import { useAuthUser } from "react-auth-kit";
 import {
@@ -45,27 +45,20 @@ const items = [
     },
 ];
 
-export const Topbar = () => {
+export const AdminHeader = () => {
     return (
-        <div className="topbarContainer">
-            <div className="topBarBanner">
-                <Link style={{ display: 'flex', alignItems: 'center' }} to={'/'}>
-                    <div className="topBarLogo">
-                        HieuCaoToeic88
-                    </div>
-                </Link>
-                <div className="topBarRight">
-                    <div className="topBarContact">
-                        <MailOutlined />
-                        <MessageOutlined />
-                        <PhoneOutlined />
-                    </div>
-                    <div className="topBarInfo">
-                        <div className="topBarName">Bao Hieu</div>
-                        <div className="topBarAvatar">
+        <div className="adminHeaderContainer">
+            <div className="adminHeaderBanner">
+                <div className="adminHeaderLogo">
+                    HieuCaoToeic88
+                </div>
+                <div className="adminHeaderRight">
+                    <div className="adminHeaderInfo">
+                        <div className="adminHeaderName">Welcome back, Bao Hieu</div>
+                        <div className="adminHeaderAvatar">
                             <img src={baseAvatar} />
                         </div>
-                        <div className="topBarMenu">
+                        <div className="adminHeaderMenu">
                             <Dropdown
                                 menu={{
                                     items,

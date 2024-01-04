@@ -19,7 +19,7 @@ const MegaMenu = () => {
     useEffect(() => {
         const handleClick = (e) => {
             const target = e.target.closest('[data-menu-id]');
-            console.log(target);
+            console.log("target", target);
             if (target) {
                 const key = target.getAttribute('data-menu-id');
                 const path = target.getAttribute('path');
@@ -30,7 +30,6 @@ const MegaMenu = () => {
         };
 
         const menuElements = document.querySelectorAll('.ant-space-item .ant-menu-item');
-        console.log(menuElements);
         menuElements.forEach((element) => {
             element.addEventListener('click', handleClick);
         });
@@ -47,6 +46,7 @@ const MegaMenu = () => {
         <div style={{ backgroundColor: "white" }}>
             <Space direction="horizontal" size={"large"}>
                 <Menu
+                    onClick={onMegaMenuItemClick}
                     selectedKeys={selectedKeys}
                     style={{
                         width: "15vw",
@@ -59,7 +59,7 @@ const MegaMenu = () => {
                             label: "Đề thi đầy đủ",
                             key: "mg1",
                             icon: <BorderlessTableOutlined />,
-                            path: '/exam',
+                            path: '/mocks',
                         },
                         {
                             label: "Học theo lộ trình",
@@ -68,9 +68,10 @@ const MegaMenu = () => {
                             path: '/'
                         },
                         {
-                            label: "Học ngữ pháp",
+                            label: "Học từ vựng",
                             key: "mg3",
-                            icon: <SortAscendingOutlined />
+                            icon: <SortAscendingOutlined />,
+                            path: '/vocabulary'
                         }
                     ]}
                 />
@@ -83,72 +84,23 @@ const MegaMenu = () => {
                     }}
                     items={[
                         {
-                            label: "Lịch sử học",
+                            label: "Học bổ trợ",
                             key: "mg4",
+                            icon: <HighlightOutlined />,
+                        },
+                        {
+                            label: "Lịch sử học",
+                            key: "mg5",
                             icon: <HistoryOutlined />
                         },
                         {
                             label: "Tips làm bài",
-                            key: "mg5",
+                            key: "mg6",
                             icon: <PlusCircleOutlined />
                         },
-                        {
-                            label: "Học part 1",
-                            key: "mg6",
-                            icon: <HighlightOutlined />
-                        }
                     ]}
                 />
-                <Menu
-                    onClick={onMegaMenuItemClick}
-                    selectedKeys={selectedKeys}
-                    style={{
-                        width: "15vw", boxShadow: "none", border: "none", color: "#6c757d",
-                        fontSize: "16px",
-                    }}
-                    items={[
-                        {
-                            label: "Học part 2",
-                            key: "mg7",
-                            icon: <HighlightOutlined />
-                        },
-                        {
-                            label: "Học part 3",
-                            key: "mg8",
-                            icon: <HighlightOutlined />
-                        },
-                        {
-                            label: "Học part 4",
-                            key: "mg9",
-                            icon: <HighlightOutlined />
-                        }
-                    ]}
-                />
-                <Menu
-                    onClick={onMegaMenuItemClick}
-                    selectedKeys={selectedKeys}
-                    style={{
-                        width: "15vw", boxShadow: "none", border: "none", color: "#6c757d",
-                        fontSize: "16px",
-                    }}
-                    items={[
-                        {
-                            label: "Học part 5",
-                            key: "mg10",
-                            icon: <HighlightOutlined />
-                        },
-                        {
-                            label: "Học part 6",
-                            key: "mg11",
-                            icon: <HighlightOutlined />
-                        },
-                        {
-                            label: "Học part 7",
-                            key: "mg12",
-                            icon: <HighlightOutlined />
-                        }
-                    ]}
-                />
+
             </Space>
 
         </div>
@@ -176,17 +128,17 @@ const items = [
     },
     {
         label: 'Thi thử',
-        key: 'm2',
+        key: 'mocks',
         icon: <HighlightOutlined />,
     },
     {
         label: 'Học theo lộ trình',
-        key: 'm3',
+        key: '',
         icon: <CheckOutlined />,
     },
     {
-        label: "Tự học TOEIC",
-        key: 'm4',
+        label: "Học từ vựng",
+        key: 'vocabulary',
         icon: <AimOutlined />
     },
     {
@@ -201,12 +153,16 @@ const items = [
     }
 ];
 
-export const TopMenu = () => {
-    const [current, setCurrent] = useState('mail');
+export const TopMenu = (props) => {
+    const [current, setCurrent] = useState(props.active);
+    const navigate = useNavigate();
     const onClick = (e) => {
-        console.log('click ', e);
         setCurrent(e.key);
+        if (e.key !== 'm1' && e.key !== 'MegaMenu') {
+            navigate(`/${e.key}`);
+        }
     };
+    console.log(props.active);
     return (
         <div className="topMenuContainer">
             <div className="topMenuOptions">

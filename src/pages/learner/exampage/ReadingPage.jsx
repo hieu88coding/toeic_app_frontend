@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef, forwardRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import "./examPage.scss";
+import "./readingPage.scss";
 import { usePlyr } from "plyr-react";
 import Countdown from 'react-countdown';
 import "plyr-react/plyr.css";
@@ -66,13 +66,13 @@ const CustomPlyrInstance = forwardRef((props, ref) => {
     );
 });
 
-const ExamPage = () => {
+const ReadingPage = () => {
     const refAudio = useRef(null);
     const [open, setOpen] = useState(true);
     const [stats, setStats] = useState([]);
     const [media, setMedia] = useState([]);
     const testCode = useLocation().pathname.split("/")[2];
-    const partName = useLocation().pathname.split("/")[3];
+    const level = useLocation().pathname.split("/")[3];
     const navigate = useNavigate();
     const [userAnswer, setUserAnswer] = useState({});
     const [isSubmit, setIsSubmit] = useState(false);
@@ -101,7 +101,7 @@ const ExamPage = () => {
                 userAnswer: userAnswer
             }
             localStorage.setItem('userExamResult', JSON.stringify(data));
-            navigate(`/result/${testCode}/${partName}`);
+            navigate(`/result/${testCode}/0`);
         }
     };
     const handleSubmit = () => {
@@ -112,14 +112,14 @@ const ExamPage = () => {
     };
 
     const notReady = () => {
-        navigate("/mocks");
+        navigate("/");
     }
 
     const getStats = async () => {
         try {
-            const res = await publicRequest.get(`/mockTests/${testCode}`);
+            const res = await publicRequest.get(`/readings/${testCode}/${level}`);
             console.log(res.data);
-            const { testName, audiomp3, correctAnswer, pdf } = res.data;
+            const { testName, correctAnswer, pdf } = res.data;
             const answerList = await axios.get(`${correctAnswer}`);
             const imageRefs = await listAll(ref(storage, res.data.images)); // Lấy danh sách các file trong thư mục
             const imageUrls = await Promise.all(
@@ -137,24 +137,10 @@ const ExamPage = () => {
                 const indexB = parseInt(b.name.split('_')[1]);
                 return indexA - indexB;
             });
-            const partSlices = {
-                "1": [0, 3],
-                "2": [3, 4],
-                "3": [5, 8],
-                "4": [9, 12],
-                "5": [13, 15],
-                "6": [16, 19],
-                "7": [20, 39],
-            };
-
-            const [startSlice, endSlice] = partSlices[partName] || [0, stats.length];
-            const selectedStats = stats.slice(startSlice, endSlice);
-
-            setStats(selectedStats);
+            setStats(stats);
             setMedia({
                 testName: testName,
                 pdf: pdf,
-                audio: audiomp3,
                 answer: answerList.data,
             });
         } catch (error) {
@@ -173,8 +159,8 @@ const ExamPage = () => {
 
     const topExamBar = useMemo(
         () => (
-            <div className="examPageContainer" style={{ overflow: 'hidden' }}>
-                <Link to={'/mocks'} className="closeBtn">
+            <div className="readingPageContainer" style={{ overflow: 'hidden' }}>
+                <Link to={'/'} className="closeBtn">
                     <div >
                         <CloseOutlined style={{ paddingRight: 10 }} /> Đóng
                     </div>
@@ -234,8 +220,8 @@ const ExamPage = () => {
     const mainContent = useMemo(
         () => (
             <div className="mainExamContainer" style={{ overflow: 'hidden' }}>
-                <ExamSheet typeSheet="exam" data={stats} />
-                <AnswerSheet typeSheet="exam" userAnswers={userAnswer} updateSelectedAnswers={updateSelectedAnswers} />
+                <ExamSheet typeSheet="reading" data={stats} />
+                <AnswerSheet typeSheet="reading" userAnswers={userAnswer} updateSelectedAnswers={updateSelectedAnswers} />
             </div>
         ), [stats, userAnswer]
     );
@@ -259,4 +245,4 @@ const ExamPage = () => {
     );
 };
 
-export default ExamPage; 
+export default ReadingPage; 

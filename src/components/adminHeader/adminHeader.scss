@@ -1,0 +1,59 @@
+.adminHeaderContainer {
+    width: 100%;
+    background-color: white;
+    padding: 15px 10px;
+
+
+    .adminHeaderBanner {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .adminHeaderLogo {
+            margin-left: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .adminHeaderRight {
+            width: 50%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+
+            .adminHeaderInfo {
+                width: 50%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+
+                .adminHeaderName {
+                    font-size: 16px;
+                    font-weight: 500;
+                    margin-right: 30px;
+                }
+
+                .adminHeaderAvatar {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+
+                    img {
+                        width: 48px;
+                        height: 100%;
+                        border-radius: 50%;
+                        border: 1px solid black;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+
+    }
+}

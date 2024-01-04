@@ -1,0 +1,55 @@
+.createProductModalInputsWrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    gap: 10px;
+    .createProductModalInputWrapper {
+        div{
+            width: 100%;
+        }
+    }
+
+}
+.createProductModalUploadImage{
+    margin-top: 10px;
+    
+    input{
+        display: none;
+    }
+    button{
+        width: 100%;
+        background-color:#0d99ff;
+        color:white;
+        padding: 10px 15px;
+        border-radius: 10px;
+        transition: all ease 0.2s;
+        &:hover{
+            background-color: #1085d8;
+        }
+    }
+}
+
+.confirmModalBtns{
+    display: flex;
+    justify-content: flex-end;
+    button{
+        margin-left: 10px;
+        padding: 10px 15px;
+        background-color:#0d99ff;
+        color:white;
+        padding: 10px 15px;
+        border-radius: 10px;
+        transition: all ease 0.2s;
+        &:hover{
+            background-color: #1085d8;
+        }
+    }
+    button:nth-child(2){
+        padding: 10px 15px;
+        background-color: #f24822;
+        border-radius: 10px;
+        &:hover{
+            background-color: #d23f1e;
+        }
+    }
+}
