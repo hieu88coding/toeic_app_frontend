@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { DataProvider } from './utils/dataContext';
 import HomePage from './pages/learner/homepage/HomePage';
 import ExamPage from './pages/learner/exampage/ExamPage';
-import CreateTest from './pages/admin/createTest/createTest';
+import CreateTest from './pages/admin/createTest/CreateTest';
 import AllMocksPage from './pages/learner/allMocksPage/AllMocksPage';
 import ResultPage from './pages/learner/resultPage/ResultPage';
 import CreateListening from './pages/admin/createLevel/CreateListening';
@@ -20,6 +20,8 @@ import ReadingPage from './pages/learner/exampage/ReadingPage';
 import CreateReading from './pages/admin/createLevel/CreateReading';
 import AllSelfLearn from './pages/learner/allSelfLearn/AllSelfLearn';
 import AdminDashboard from './pages/admin/adminDashboard/AdminDashboard';
+import ImageSearch from './components/textToSpeech/ImageSearchAPI';
+import Vocabulary from './pages/learner/allSelfLearn/Vocabulary';
 function App() {
 
   return (
@@ -68,8 +70,16 @@ function App() {
             element={<AllSelfLearn />}
           />
           <Route
+            exact path="/vocabulary/:topicName"
+            element={<Vocabulary />}
+          />
+          <Route
             exact path="/admin"
             element={<AdminDashboard />}
+          />
+          <Route
+            exact path="/photos"
+            element={<ImageSearch />}
           />
         </Routes>
       </BrowserRouter>

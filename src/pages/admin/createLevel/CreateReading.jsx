@@ -6,13 +6,30 @@ import {
 } from "firebase/storage";
 import { storage } from '../../../firebase';
 import { v4 } from "uuid";
-import { message } from "antd";
+import { Modal, Input, Select } from "antd";
+import { useToastSuccess, useToastError } from "../../../utils/toastSettings";
 import { publicRequest } from "../../../requestMethods";
 
-function CreateReading() {
+function CreateReading({
+    dataTest,
+    testName,
+    isOpenModal,
+    handleOpenChange,
+}) {
     const [pdfFileUpload, setPdfFileUpload] = useState({ file: null, fileType: 'pdf' });
     const [jsonFileUpload, setJsonFileUpload] = useState({ file: null, fileType: 'json' });
     const data = [];
+    const [testTilte, setTestTilte] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState(450);
+
+    const handleLevelChange = (value) => {
+        setSelectedLevel(value);
+    };
+
+    function closeModal() {
+        handleOpenChange(false);
+    }
     const uploadFile = (fileData) => {
         return new Promise((resolve, reject) => {
             if (fileData.file == null) {
@@ -55,8 +72,8 @@ function CreateReading() {
                 try {
                     const res = await publicRequest.post(
                         `/readings`, {
-                        level: 500,
-                        testName: 'Reading2',
+                        level: selectedLevel,
+                        testName: testTilte,
                         data: data
                     });
                     if (res && res.status === 200) {
@@ -78,29 +95,123 @@ function CreateReading() {
     };
 
     return (
-        <div className="App">
-            <input
-                type="file"
-                onChange={(event) => {
-                    setPdfFileUpload({
-                        file: event.target.files[0],
-                        fileType: 'pdf',
-                    });
-                }}
-            />
-            <div>
-                <input
-                    type="file"
-                    onChange={(event) => {
-                        setJsonFileUpload({
-                            file: event.target.files[0],
-                            fileType: 'json',
-                        });
-                    }}
-                />
+        <Modal
+            title={`Thêm mới bài ${testName} `}
+            open={isOpenModal}
+            onCancel={closeModal}
+            onOk={handleCreateReading}
+            confirmLoading={isLoading}
+            cancelText="Hủy"
+            okText="Xác nhận"
+            width={570}
+        >
+            <div className="App">
+                <div style={{ marginBottom: 20 }}>
+                    <span>Tên bài test </span>
+                    <Input
+                        placeholder=" Cú pháp: Reading + number, ví dụ: Reading1"
+                        autoComplete="off"
+                        type="text"
+                        onInput={(event) => {
+                            const inputValue = event.target.value;
+                            const capitalizedValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+                            event.target.value = capitalizedValue;
+                        }}
+                        onChange={(event) => {
+                            setTestTilte(event.target.value);
+                        }}
+                    />
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                    <div>Level của bài test</div>
+                    <Select
+                        defaultValue={450}
+                        style={{
+                            width: 120,
+                        }}
+                        onChange={handleLevelChange}
+                        options={[
+                            {
+                                value: 450,
+                                label: 'Level 450',
+                            },
+                            {
+                                value: 500,
+                                label: 'Level 500',
+                            },
+                            {
+                                value: 550,
+                                label: 'Level 550',
+                            },
+                            {
+                                value: 600,
+                                label: 'Level 600',
+                            },
+                            {
+                                value: 650,
+                                label: 'Level 650',
+                            },
+                            {
+                                value: 700,
+                                label: 'Level 700',
+                            },
+                            {
+                                value: 750,
+                                label: 'Level 750',
+                            },
+                            {
+                                value: 800,
+                                label: 'Level 800',
+                            },
+                            {
+                                value: 850,
+                                label: 'Level 850',
+                            },
+                            {
+                                value: 900,
+                                label: 'Level 900',
+                            },
+                            {
+                                value: 950,
+                                label: 'Level 950',
+                            },
+                            {
+                                value: 990,
+                                label: 'Level 990',
+                            },
+                        ]}
+                    />
+                </div>
+
+                <div className="input" style={{ marginBottom: 10 }}>
+                    <div>Chọn file pdf </div>
+                    <input
+                        type="file"
+                        onChange={(event) => {
+                            setPdfFileUpload({
+                                file: event.target.files[0],
+                                fileType: 'pdf',
+                            });
+                        }}
+                    />
+
+                </div>
+                <div className="input" style={{ marginBottom: 10 }}>
+                    <div>Chọn file đáp án </div>
+                    <input
+                        type="file"
+                        onChange={(event) => {
+                            setJsonFileUpload({
+                                file: event.target.files[0],
+                                fileType: 'json',
+                            });
+                        }}
+                    />
+                </div>
+
             </div>
-            <button onClick={handleCreateReading}>Submit</button>
-        </div>
+        </Modal>
     );
 }
 

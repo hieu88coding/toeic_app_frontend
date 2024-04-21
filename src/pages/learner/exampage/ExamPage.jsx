@@ -74,39 +74,7 @@ const ExamPage = () => {
     const testCode = useLocation().pathname.split("/")[2];
     const partName = useLocation().pathname.split("/")[3];
     const navigate = useNavigate();
-    const [userAnswer, setUserAnswer] = useState({});
-    const [isSubmit, setIsSubmit] = useState(false);
 
-    const updateSelectedAnswers = (questionNumber, answer) => {
-        setUserAnswer((prevUserAnswers) => {
-            if (prevUserAnswers[questionNumber] === answer) {
-                const newSelectedAnswers = { ...prevUserAnswers };
-                delete newSelectedAnswers[questionNumber];
-                return newSelectedAnswers;
-            } else {
-                return {
-                    ...prevUserAnswers,
-                    [questionNumber]: answer,
-                };
-            }
-        });
-    };
-
-    const handleAnswerSubmit = () => {
-        if (isSubmit) {
-            console.log("Da submit", userAnswer);
-            const data = {
-                pdf: media.pdf,
-                rightAnswer: media.answer,
-                userAnswer: userAnswer
-            }
-            localStorage.setItem('userExamResult', JSON.stringify(data));
-            navigate(`/result/${testCode}/${partName}`);
-        }
-    };
-    const handleSubmit = () => {
-        setIsSubmit(true);
-    }
     const hideModal = () => {
         setOpen(false);
     };
@@ -115,47 +83,20 @@ const ExamPage = () => {
         navigate("/mocks");
     }
 
+
+
     const getStats = async () => {
         try {
             const res = await publicRequest.get(`/mockTests/${testCode}`);
             console.log(res.data);
-            const { testName, audiomp3, correctAnswer, pdf } = res.data;
+            const { testName, audiomp3, correctAnswer, pdf, images } = res.data;
             const answerList = await axios.get(`${correctAnswer}`);
-            const imageRefs = await listAll(ref(storage, res.data.images)); // Lấy danh sách các file trong thư mục
-            const imageUrls = await Promise.all(
-                imageRefs.items.map(async (imageRef) => {
-                    const url = await getDownloadURL(imageRef); // Tải xuống từng ảnh
-                    return url;
-                })
-            );
-            const stats = imageUrls.map((url, index) => ({
-                name: imageRefs.items[index].name,
-                url: url,
-            }));
-            stats.sort((a, b) => {
-                const indexA = parseInt(a.name.split('_')[1]);
-                const indexB = parseInt(b.name.split('_')[1]);
-                return indexA - indexB;
-            });
-            const partSlices = {
-                "1": [0, 3],
-                "2": [3, 4],
-                "3": [5, 8],
-                "4": [9, 12],
-                "5": [13, 15],
-                "6": [16, 19],
-                "7": [20, 39],
-            };
-
-            const [startSlice, endSlice] = partSlices[partName] || [0, stats.length];
-            const selectedStats = stats.slice(startSlice, endSlice);
-
-            setStats(selectedStats);
             setMedia({
                 testName: testName,
                 pdf: pdf,
                 audio: audiomp3,
-                answer: answerList.data,
+                answer: answerList,
+                images: images
             });
         } catch (error) {
             console.error("Lỗi khi lấy danh sách ảnh:", error);
@@ -165,11 +106,6 @@ const ExamPage = () => {
         getStats();
     }, []);
 
-    useEffect(() => {
-        if (isSubmit) {
-            handleAnswerSubmit();
-        }
-    }, [isSubmit]);
 
     const topExamBar = useMemo(
         () => (
@@ -183,17 +119,7 @@ const ExamPage = () => {
                 <div className="middleHeader">
                     <div className="middleTitle">ETS TOEIC {media && media.testName}</div>
                     <div className="middleMp3">
-                        {(
-                            <CustomPlyrInstance ref={refAudio} type="audio" source={{
-                                type: "audio",
-                                sources: [
-                                    {
-                                        type: "audio/mp3",
-                                        src: media.audio,
-                                    },
-                                ],
-                            }} options={audioOptions} />
-                        )}
+
                     </div>
                 </div>
 
@@ -213,20 +139,6 @@ const ExamPage = () => {
                     </div>
                 }
 
-                {!open &&
-                    <div>
-                        <Button
-                            style={{
-                                width: '103%', height: '100%',
-                                borderBottom: 'none !important',
-                                borderTop: 'none !important'
-                            }}
-                            onClick={handleSubmit}
-                            icon={<CheckOutlined />}>Nộp bài</Button>
-                    </div>
-                }
-
-
             </div>
         ),
         [open] // Rỗng để chỉ render một lần duy nhất
@@ -234,10 +146,10 @@ const ExamPage = () => {
     const mainContent = useMemo(
         () => (
             <div className="mainExamContainer" style={{ overflow: 'hidden' }}>
-                <ExamSheet typeSheet="exam" data={stats} />
-                <AnswerSheet typeSheet="exam" userAnswers={userAnswer} updateSelectedAnswers={updateSelectedAnswers} />
+                <ExamSheet typeSheet="exam" data={stats} testName={testCode} />
+                <AnswerSheet typeSheet="exam" rightAnswer={media.answer} />
             </div>
-        ), [stats, userAnswer]
+        ), [stats]
     );
     return (
         <div style={{ overflowY: 'hidden' }}>

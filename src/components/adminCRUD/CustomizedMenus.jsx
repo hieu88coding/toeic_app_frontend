@@ -52,22 +52,12 @@ const StyledMenu = styled((props) => (
 }));
 
 export default function CustomizedMenus({
-  handleExelClick,
-  isOpenModal,
   handleOpenChange,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleExelProps = () => {
-    handleExelClick();
-    handleClose();
   };
 
   const handleModalProps = () => {
@@ -83,29 +73,11 @@ export default function CustomizedMenus({
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         variant="contained"
-        onClick={handleClick}
+        onClick={handleModalProps}
         type="primary"
       >
-        <UploadOutlined /> Tải lên
+        <UploadOutlined /> Thêm mới
       </Button>
-      <StyledMenu
-        id="demo-customized-menu"
-        MenuListProps={{
-          "aria-labelledby": "demo-customized-button",
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleExelProps} disableRipple>
-          <FileCopyIcon />
-          Tải lên file .xlsx
-        </MenuItem>
-        <MenuItem onClick={handleModalProps} disableRipple>
-          <EditIcon />
-          Nhập tay
-        </MenuItem>
-      </StyledMenu>
     </div>
   );
 }

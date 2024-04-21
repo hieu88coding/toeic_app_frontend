@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {
+    AudioOutlined,
+    BulbOutlined,
     DesktopOutlined,
     FileOutlined,
     PieChartOutlined,
@@ -9,6 +11,7 @@ import {
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { AdminHeader } from '../../../components/adminHeader/AdminHeader';
 import { AdminCRUD } from '../../../components/adminCRUD/AdminCRUD';
+import { MessageOutlined } from '@mui/icons-material';
 //import { AdminAddItem } from '../../../components/adminCRUD/AdminAddItem';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -21,17 +24,13 @@ function getItem(label, key, icon, children) {
 }
 const items = [
     getItem('Dashboard', 's1', <PieChartOutlined />),
-    getItem('User', 'sub1', <UserOutlined />, [
-        getItem('Tom', '3'),
-        getItem('Bill', '4'),
-        getItem('Alex', '5'),
-    ]),
+    getItem('User', 'sub1', <UserOutlined />),
     getItem('Mock Tests', 'mockTests', <DesktopOutlined />),
-    getItem('Listenings', 'listenings', <DesktopOutlined />),
-    getItem('Readings', 'readings', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+    getItem('Listenings', 'listenings', <AudioOutlined />),
+    getItem('Readings', 'readings', <TeamOutlined />),
     getItem('Grammars', 'grammars', <FileOutlined />),
-    getItem('Vocabularys', 'vocabularys', <FileOutlined />),
-    getItem('Blogs', 'blogs', <FileOutlined />),
+    getItem('Vocabularys', 'vocabularys', <MessageOutlined />),
+    getItem('Blogs', 'blogs', <BulbOutlined />),
 ];
 const AdminDashboard = () => {
     const {

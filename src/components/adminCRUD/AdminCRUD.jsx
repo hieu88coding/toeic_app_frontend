@@ -17,9 +17,11 @@ import { publicRequest, userRequest } from "../../requestMethods";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { WarningModal } from '../warningModal/WarningModal';
-import { AddProductModal } from '../addProductModal/AddProductModal';
 import CustomizedMenus from './CustomizedMenus';
-
+import CreateTest from '../../pages/admin/createTest/CreateTest'
+import CreateListening from '../../pages/admin/createLevel/CreateListening';
+import CreateReading from '../../pages/admin/createLevel/CreateReading';
+import CreateVocab from '../../pages/admin/createVocab/CreateVocab';
 
 
 const EditableCell = ({
@@ -88,68 +90,9 @@ export const AdminCRUD = (props) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
 
-    const handlePostProducts = async () => {
-        // if (data && data.length === 0) {
-        //   useToastError("Hàng chưa được tải lên !");
-        // } else if (!validateProducts(data)) {
-        //   return;
-        // } else {
-        //   let checkedArray = await handleCheckProductCode();
-        //   if (checkedArray.length === 0) {
-        //     for (let i = 0; i < data.length; ++i) {
-        //       try {
-        //         let res = await userRequest.post(`/productShop`, {
-        //           name: data[i].name,
-        //           quantity: data[i].quantity,
-        //           price: data[i].price,
-        //           image: data[i].image,
-        //           weight: data[i].weight,
-        //           description: data[i].description,
-        //           productCode: v4(),
-        //           shopOwnerId: authUser().id,
-        //         });
-        //         await userRequest.put(`/productShop/${res.data.data.id}`, {
-        //           name: data[i].name,
-        //           quantity: data[i].quantity,
-        //           price: data[i].price,
-        //           image: data[i].image,
-        //           weight: data[i].weight,
-        //           description: data[i].description,
-        //           productCode: generateProductCode(res.data.data.id),
-        //           shopOwnerId: authUser().id,
-        //         });
-        //       } catch (error) {
-        //         console.log(error);
-        //       }
-        //     }
-        //     handleClearProducts();
-        //     navigate(0);
-        //   } else {
-        //     for (let i = 0; i < checkedArray.length; i++) {
-        //       useToastError(checkedArray[i]);
-        //     }
-        //   }
-        // }
-    };
-
 
     const handleOpenChange = (newValue) => {
         setIsOpen(newValue);
-    };
-
-    const handleAddProduct = (inputs, imageURL) => {
-        // setProducts((prevProducts) => [
-        //   ...prevProducts,
-        //   {
-        //     id: inputs.id,
-        //     image: imageURL,
-        //     name: inputs.name,
-        //     price: parseInt(inputs.price),
-        //     quantity: parseInt(inputs.quantity),
-        //     description: inputs.description,
-        //     weight: parseFloat(inputs.weight),
-        //   },
-        // ]);
     };
 
     const getProducts = async () => {
@@ -256,12 +199,12 @@ export const AdminCRUD = (props) => {
             align: "center",
         },
         {
-            title: "File PDF Đề bài",
+            title: "File Exel Đề bài",
             dataIndex: "pdf",
             editable: true,
             align: "center",
             render: (_, record) => (
-                <a href={record.pdf}>Link PDF đề bài</a> // Sử dụng component Link để tạo liên kết
+                <a href={record.pdf}>Link Exel đề bài</a> // Sử dụng component Link để tạo liên kết
             ),
         },
         {
@@ -270,7 +213,7 @@ export const AdminCRUD = (props) => {
             editable: true,
             align: "center",
             render: (_, record) => (
-                <a href={record.pdf}>Link file Audio MP3</a> // Sử dụng component Link để tạo liên kết
+                <a href={record.audiomp3}>Link file Audio MP3</a> // Sử dụng component Link để tạo liên kết
             ),
         },
         {
@@ -279,7 +222,7 @@ export const AdminCRUD = (props) => {
             editable: true,
             align: "center",
             render: (_, record) => (
-                <a href={record.pdf}>Link Đáp án</a> // Sử dụng component Link để tạo liên kết
+                <a href={record.correctAnswer}>Link Đáp án</a> // Sử dụng component Link để tạo liên kết
             ),
         },
         {
@@ -391,16 +334,49 @@ export const AdminCRUD = (props) => {
         <div>
             <div style={{ fontSize: 18, fontWeight: 'bold' }}>{stats}</div>
             <div>
-                <AddProductModal
-                    style={{ textAlign: "center" }}
-                    isOpenModal={isOpen}
-                    handleOpenChange={handleOpenChange}
-                    handleAddProduct={handleAddProduct}
-                /></div>
+                {(props.itemKey === 'mockTests') &&
+                    <CreateTest
+                        dataTest={data}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isOpen}
+                        handleOpenChange={handleOpenChange}
+                    />
+                }
+                {props.itemKey === 'listenings' &&
+                    <CreateListening
+                        dataTest={data}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isOpen}
+                        handleOpenChange={handleOpenChange}
+                    />
+
+                }
+                {props.itemKey === 'readings' &&
+                    <CreateReading
+                        dataTest={data}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isOpen}
+                        handleOpenChange={handleOpenChange}
+                    />
+
+                }
+                {props.itemKey === 'vocabularys' &&
+                    <CreateVocab
+                        dataTest={data}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isOpen}
+                        handleOpenChange={handleOpenChange}
+                    />
+
+                }
+            </div>
 
             <div style={{ marginBottom: 30, display: 'flex', justifyContent: 'flex-end' }} className="uploadExcelBtn">
                 <CustomizedMenus
-                    //handleExelClick={handleUploadExcel}
                     handleOpenChange={handleOpenChange}
                     isOpenModal={isOpen}
                 />

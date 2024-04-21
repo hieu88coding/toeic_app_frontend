@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./answerSheet.scss";
 import { Space, Card, Button } from "antd";
@@ -7,7 +7,34 @@ import { CloseOutlined, CheckOutlined, ExclamationCircleOutlined } from "@ant-de
 import Scrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
-const AnswerSheet = ({ typeSheet, userAnswers, updateSelectedAnswers }) => {
+const AnswerSheet = ({ typeSheet, rightAnswer }) => {
+    const navigate = useNavigate();
+    const [userAnswer, setUserAnswer] = useState({});
+    const testCode = useLocation().pathname.split("/")[2];
+    const partName = useLocation().pathname.split("/")[3];
+    const updateSelectedAnswers = (questionNumber, answer) => {
+        setUserAnswer((prevUserAnswers) => {
+            if (prevUserAnswers[questionNumber] === answer) {
+                const newSelectedAnswers = { ...prevUserAnswers };
+                delete newSelectedAnswers[questionNumber];
+                return newSelectedAnswers;
+            } else {
+                return {
+                    ...prevUserAnswers,
+                    [questionNumber]: answer,
+                };
+            }
+        });
+    };
+    const handleAnswerSubmit = () => {
+        console.log("Da submit", userAnswer);
+        const data = {
+            rightAnswer: rightAnswer,
+            userAnswer: userAnswer
+        }
+        localStorage.setItem('userExamResult', JSON.stringify(data));
+        navigate(`/result/${testCode}/${partName}`);
+    };
     const getQuestionCountsAndStartNumbers = (partName) => {
         if (typeSheet === "exam") {
             switch (partName) {
@@ -35,17 +62,18 @@ const AnswerSheet = ({ typeSheet, userAnswers, updateSelectedAnswers }) => {
         }
 
     };
-    const renderAnswers = () => {
+    const handleAnswerSelect = useCallback((questionNumber, answer) => {
+        updateSelectedAnswers(questionNumber, answer);
+    });
+    const renderAnswers = useCallback(() => {
         const answers = ["A", "B", "C", "D"];
         const partName = useLocation().pathname.split("/")[3];
         const { questionCount, startedQuestionNumber } = getQuestionCountsAndStartNumbers(partName);;
-        const handleAnswerSelect = (questionNumber, answer) => {
-            updateSelectedAnswers(questionNumber, answer);
-        };
+
 
         return Array.from({ length: questionCount }, (_, index) => {
             const questionNumber = startedQuestionNumber + index;
-            const answerCount = questionNumber >= 11 && questionNumber <= 40 ? 3 : answers.length;
+            const answerCount = questionNumber >= 7 && questionNumber <= 31 ? 3 : answers.length;
 
             return (
                 <div className="question" key={questionNumber}>
@@ -56,10 +84,10 @@ const AnswerSheet = ({ typeSheet, userAnswers, updateSelectedAnswers }) => {
                     </div>
                     {Array.from({ length: answerCount }, (_, answerIndex) => {
                         const answer = answers[answerIndex];
-                        const isSelected = userAnswers[questionNumber] === answer;
+                        const isSelected = userAnswer[questionNumber] === answer;
 
                         return (
-                            <div className="questAns" key={answerIndex}>
+                            <div className="questAns" key={answer}>
                                 <Button
                                     style={{ fontWeight: 'bold' }}
                                     type={isSelected ? "primary" : "dashed"}
@@ -74,17 +102,26 @@ const AnswerSheet = ({ typeSheet, userAnswers, updateSelectedAnswers }) => {
                 </div>
             );
         });
-    };
+    });
 
     return (
         <div>
-
-            <div className="answerSheetContainer" style={typeSheet === "exam" ? {} : { marginTop: 40 }}>
-                <Scrollbar style={{ maxHeight: 580 }} options={{ suppressScrollX: true }}>
-                    <Card title={"ANSWER SHEET"}>
+            <div className="answerSheetContainer" style={typeSheet === "exam" ? { marginTop: 70 } : { marginTop: 40 }}>
+                <Scrollbar style={{ maxHeight: 610 }} options={{ suppressScrollX: true }}>
+                    <Card title={<> <div>
+                        <Button
+                            type="primary"
+                            style={{
+                                width: '100%'
+                            }}
+                            onClick={handleAnswerSubmit}
+                            icon={<CheckOutlined />}>Nộp bài</Button>
+                    </div></>}>
                         {renderAnswers()}
 
+
                     </Card>
+
                 </Scrollbar>
             </div>
 
