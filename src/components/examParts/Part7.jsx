@@ -37,8 +37,8 @@ export const Part7 = (props) => {
 
     return (
         <div>
-            <Card title={null} style={{ width: '98%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
-                <div className="part7-instruction">
+            <Card title={null} style={{ width: '100%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
+                <div style={{ fontSize: 16 }} className="part7-instruction">
                     <b>Part 7.</b> In this part you will read a selection of texts, such as magazine and newspaper articles, letters, and advertisements. Each text is followed by several questions. Select the best answer for each question and mark the letter (A), (B), (C), or (D) on your answer sheet.
                 </div>
             </Card>

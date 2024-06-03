@@ -15,16 +15,23 @@ function CreateListening({
     isOpenModal,
     handleOpenChange,
 }) {
-    const [pdfFileUpload, setPdfFileUpload] = useState({ file: null, fileType: 'pdf' });
+    const [imageFileUpload, setImageFileUpload] = useState({ file: null, fileType: 'jpg' });
+    const [exelFileUpload, setExelFileUpload] = useState({ file: null, fileType: 'exel' });
     const [audioFileUpload, setAudioFileUpload] = useState({ file: null, fileType: 'audio' });
     const [jsonFileUpload, setJsonFileUpload] = useState({ file: null, fileType: 'json' });
     const data = [];
     const [testTilte, setTestTilte] = useState("");
+    const [testCategory, setTestCategory] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState(450);
+    const [selectedPart, setSelectedPart] = useState('Part 1 - Mô tả tranh');
 
     const handleLevelChange = (value) => {
         setSelectedLevel(value);
+    };
+
+    const handlePartChange = (value) => {
+        setSelectedPart(value);
     };
     const uploadFile = (fileData) => {
         return new Promise((resolve, reject) => {
@@ -33,26 +40,41 @@ function CreateListening({
                 return;
             }
 
-            const fileRef = ref(storage, `${fileData.fileType}/${fileData.file.name + v4()}`);
+            const fileRef = ref(storage, `Listenings/${fileData.fileType}/${selectedPart}/${testTilte}/${fileData.file.name}`);
             uploadBytes(fileRef, fileData.file)
-                .then((snapshot) => {
-                    getDownloadURL(snapshot.ref)
-                        .then((url) => {
-                            const fileDataWithUrl = {
-                                dataType: fileData.fileType,
-                                fileUrl: url,
-                            };
-
-                            data.push(fileDataWithUrl);
-                            resolve(fileDataWithUrl);
-                        })
-                        .catch((error) => {
-                            reject(error);
-                        });
-                })
-                .catch((error) => {
-                    reject(error);
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
                 });
+
+
+        });
+    };
+    const uploadAnswer = (fileData) => {
+        return new Promise((resolve, reject) => {
+            if (fileData.file == null) {
+                resolve(null);
+                return;
+            }
+
+            const fileRef = ref(storage, `Listenings/json/${selectedPart}/${testTilte}/${fileData.file.name}`);
+            uploadBytes(fileRef, fileData.file)
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
+                });
+
+
         });
     };
     function closeModal() {
@@ -60,30 +82,31 @@ function CreateListening({
     }
 
     const handleCreateListening = async () => {
-        const foundTest = dataTest.find(dataTest => dataTest.testName === testTilte);
-        if (foundTest === undefined && testTilte !== '') {
-            console.log(foundTest);
+        //const foundTest = dataTest.find(dataTest => dataTest.testName === testTilte);
+        if (testTilte !== '') {
+            //console.log(foundTest);
             console.log(testTilte);
             useToastSuccess("Tên test không bị trùng")
             try {
-                if (pdfFileUpload.file !== null && audioFileUpload.file !== null && jsonFileUpload !== null) {
-                    const pdfUploadPromise = uploadFile(pdfFileUpload);
-                    const audioUploadPromise = uploadFile(audioFileUpload);
-                    const jsonUploadPromise = uploadFile(jsonFileUpload);
-
-                    await Promise.all([pdfUploadPromise, audioUploadPromise, jsonUploadPromise]);
-                    message.success("Upload đề thành công !");
+                if (audioFileUpload.file !== null && jsonFileUpload !== null) {
+                    const exelUploadPromise = await uploadFile(exelFileUpload);
+                    const imageUploadPromise = await uploadFile(imageFileUpload);
+                    const audioUploadPromise = await uploadFile(audioFileUpload);
+                    const jsonUploadPromise = await uploadAnswer(jsonFileUpload);
+                    useToastSuccess("Upload đề thành công !");
+                    useToastSuccess("Hệ thống đang xử lý file");
                     console.log(data);
                     try {
                         const res = await publicRequest.post(
                             `/listenings`, {
                             level: selectedLevel,
+                            part: selectedPart,
                             testName: testTilte,
                             data: data
                         });
                         if (res && res.status === 200) {
                             console.log("Gét gô");
-                            message.success(res.message);
+                            useToastSuccess(res.message);
                         } else {
                             console.log("Not so good");
                         }
@@ -91,7 +114,7 @@ function CreateListening({
                         console.log(error);
                     }
                 } else {
-                    message.error("Chưa upload đủ file");
+                    useToastError("Chưa upload đủ file");
                     return;
                 }
             } catch (error) {
@@ -112,20 +135,34 @@ function CreateListening({
             width={570}
         >
             <div className="App">
+
+
                 <div style={{ marginBottom: 20 }}>
-                    <span>Tên bài test </span>
-                    <Input
-                        placeholder=" Cú pháp: Listening + number, ví dụ: Listening1"
-                        autoComplete="off"
-                        type="text"
-                        onInput={(event) => {
-                            const inputValue = event.target.value;
-                            const capitalizedValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
-                            event.target.value = capitalizedValue;
+                    <div>Part</div>
+                    <Select
+                        defaultValue={'Part 1 - Mô tả tranh'}
+                        style={{
+                            width: 200,
                         }}
-                        onChange={(event) => {
-                            setTestTilte(event.target.value);
-                        }}
+                        onChange={handlePartChange}
+                        options={[
+                            {
+                                value: 'Part 1 - Mô tả tranh',
+                                label: 'Part 1 - Mô tả tranh',
+                            },
+                            {
+                                value: 'Part 2 - Hỏi & Đáp',
+                                label: 'Part 2 - Hỏi & Đáp',
+                            },
+                            {
+                                value: 'Part 3 - Đoạn hội thoại',
+                                label: 'Part 3 - Đoạn hội thoại',
+                            },
+                            {
+                                value: 'Part 4 - Bài nói ngắn',
+                                label: 'Part 4 - Bài nói ngắn',
+                            },
+                        ]}
                     />
                 </div>
 
@@ -134,7 +171,7 @@ function CreateListening({
                     <Select
                         defaultValue={450}
                         style={{
-                            width: 120,
+                            width: 200,
                         }}
                         onChange={handleLevelChange}
                         options={[
@@ -189,15 +226,30 @@ function CreateListening({
                         ]}
                     />
                 </div>
-
+                <div style={{ marginBottom: 20 }}>
+                    <span>Tên bài test </span>
+                    <Input
+                        placeholder=" Cú pháp: Test + number, ví dụ: Test1"
+                        autoComplete="off"
+                        type="text"
+                        onInput={(event) => {
+                            const inputValue = event.target.value;
+                            const capitalizedValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+                            event.target.value = capitalizedValue;
+                        }}
+                        onChange={(event) => {
+                            setTestTilte(event.target.value);
+                        }}
+                    />
+                </div>
                 <div className="input" style={{ marginBottom: 10 }}>
-                    <div>Chọn file pdf </div>
+                    <div>Chọn file đề bài </div>
                     <input
                         type="file"
                         onChange={(event) => {
-                            setPdfFileUpload({
+                            setExelFileUpload({
                                 file: event.target.files[0],
-                                fileType: 'pdf',
+                                fileType: 'exel',
                             });
                         }}
                     />
@@ -213,6 +265,18 @@ function CreateListening({
                             setAudioFileUpload({
                                 file: event.target.files[0],
                                 fileType: 'mp3',
+                            });
+                        }}
+                    />
+                </div>
+                <div className="input" style={{ marginBottom: 10 }}>
+                    <div>Chọn file hình ảnh </div>
+                    <input
+                        type="file"
+                        onChange={(event) => {
+                            setImageFileUpload({
+                                file: event.target.files[0],
+                                fileType: 'jpg',
                             });
                         }}
                     />

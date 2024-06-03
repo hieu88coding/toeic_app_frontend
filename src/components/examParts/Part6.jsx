@@ -14,20 +14,24 @@ import "plyr-react/plyr.css";
 export const Part6 = (props) => {
     const exel = props.exel;
     const chunks = [];
-    for (let i = 0; i < exel.length; i += 4) {
-        chunks.push(exel.slice(i, i + 4));
-    }
-    const paragraph = exel.map((item) => {
-        if (item.question.length !== 0) {
-            return item.question;
+    let paragraph = []
+    if (exel !== undefined) {
+        for (let i = 0; i < exel.length; i += 4) {
+            chunks.push(exel.slice(i, i + 4));
         }
-        return null;
-    }).filter((item) => item !== null);
+        paragraph = exel.map((item) => {
+            if (item.question.length !== 0) {
+                return item.question;
+            }
+            return null;
+        }).filter((item) => item !== null);
+    }
+
 
     return (
         <div>
-            <Card title={null} style={{ width: '98%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
-                <div class="part6-instruction">
+            <Card title={null} style={{ width: '100%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
+                <div style={{ fontSize: 16 }} class="part6-instruction">
                     <b>Part 6.</b> A word or phrase is missing in each of the sentences below. Four answer choices are given below each sentence. Select the best answer to complete the sentence. Then mark the letter (A), (B), (C), or (D) on your answer sheet. Read the texts that follow. A word or phrase is missing in some of the sentences. Four answer choices are given below each of the sentences. Select the best answer to complete the text. Then mark the letter (A), (B), (C), or (D) on your answer sheet.
                 </div>
             </Card>
@@ -36,7 +40,7 @@ export const Part6 = (props) => {
             <div className="part6-container" style={{ marginBottom: 50, fontSize: 16 }}>
                 {
                     paragraph.length !== 0 && paragraph.map((paragraph, index) => (
-                        <div className="part6-content">
+                        <div className="part6-content" key={index}>
                             <Card title={null} style={{ width: '98%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
                                 <div dangerouslySetInnerHTML={{ __html: `${paragraph}` }}></div>
                             </Card>

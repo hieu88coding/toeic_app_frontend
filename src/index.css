@@ -4,10 +4,11 @@
     Roboto, Helvetica Neue, Arial, Noto Sans,
     sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 
+
   /* color-scheme: light dark; */
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: rgb(240, 241, 241); */
-  background-color: #f1f2f4;
+  /* background-color: #f1f2f4; */
+  background-color: #F5F7FD;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

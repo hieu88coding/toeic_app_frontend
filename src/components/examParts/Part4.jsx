@@ -47,19 +47,21 @@ export const Part4 = (props) => {
     const audio = props.audio;
     const exel = props.exel;
     const chunks = [];
-    for (let i = 0; i < exel.length; i += 3) {
-        chunks.push(exel.slice(i, i + 3));
+    if (exel !== undefined) {
+        for (let i = 0; i < exel.length; i += 3) {
+            chunks.push(exel.slice(i, i + 3));
+        }
     }
     const refAudio = useRef(null);
     return (
         <div>
-            <Card title={null} style={{ width: '98%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
-                <div className="part4-instruction">
+            <Card title={null} style={{ width: '100%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
+                <div style={{ fontSize: 16 }} className="part4-instruction">
                     <b>Part 4.</b> You will hear some talks given by a single speaker. You will be asked to answer three questions about what the speaker says in each talk. Select the best response to each question and mark the letter (A), (B), (C), or (D) on your answer sheet. The talks will not be printed in your test book and will be spoken only one time.
                 </div>
             </Card>
             {
-                audio.length !== 0 && audio.slice(44, 52).map((audio, index) => (
+                !props.isPart && audio.length !== 0 && audio.slice(44, 52).map((audio, index) => (
                     <div className="part4-container" style={{ marginBottom: 50, fontSize: 16 }} key={`Part4${index}`}>
                         <div className="part4-content">
                             <div className="part4-audio" style={{ width: '100%', display: 'flex', flexDirection: `column` }}>
@@ -97,7 +99,7 @@ export const Part4 = (props) => {
 
                 ))}
             {
-                audio.length !== 0 && audio.slice(52, 54).map((audio, index) => (
+                !props.isPart && audio.length !== 0 && audio.slice(52, 54).map((audio, index) => (
                     <div className="part4-container" style={{ marginBottom: 50, fontSize: 16 }} key={`part4${index + 99}`}>
                         <div className="part4-content">
                             <div className="part4-audio" style={{ width: '100%', display: 'flex', flexDirection: `column` }}>
@@ -116,6 +118,44 @@ export const Part4 = (props) => {
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', padding: 20, marginTop: 30 }}>
                                 {chunks && chunks[index + 8].map((exel, chunkIndex) => (
+                                    <div className="part4-question" key={`question${exel.number}`} style={{
+                                        gridColumn: chunkIndex % 2 !== 0 ? '2 / 3' : '1',
+                                        marginBottom: 20
+                                    }}>
+                                        <div className="part4-title" style={{ maxWidth: '80%', fontWeight: 'bold', marginBottom: 10 }}>Question {exel.number}. {exel.question}</div>
+                                        <div className="part4-answer" style={{ marginBottom: 10 }}>
+                                            <div>{exel.answerA}</div>
+                                            <div>{exel.answerB}</div>
+                                            <div>{exel.answerC}</div>
+                                            <div>{exel.answerD}</div>
+                                        </div>
+
+                                    </div>
+                                ))}
+
+                            </div>
+                            <Divider />
+                        </div>
+                    </div>
+
+                ))}
+            {
+                props.isPart && audio.length !== 0 && audio.map((audio, index) => (
+                    <div className="part4-container" style={{ marginBottom: 50, fontSize: 16 }} key={`Part4${index}`}>
+                        <div className="part4-content">
+                            <div className="part4-audio" style={{ width: '100%', display: 'flex', flexDirection: `column` }}>
+                                <CustomPlyrInstance key={index} ref={refAudio} type="audio" source={{
+                                    type: "audio",
+                                    sources: [
+                                        {
+                                            type: "audio/mp3",
+                                            src: audio,
+                                        },
+                                    ],
+                                }} options={audioOptions} />
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', padding: 20, marginTop: 30 }}>
+                                {chunks && chunks[index].map((exel, chunkIndex) => (
                                     <div className="part4-question" key={`question${exel.number}`} style={{
                                         gridColumn: chunkIndex % 2 !== 0 ? '2 / 3' : '1',
                                         marginBottom: 20

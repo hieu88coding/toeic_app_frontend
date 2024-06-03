@@ -3,14 +3,12 @@ import {
     ref,
     uploadBytes,
     getDownloadURL,
-    listAll
 } from "firebase/storage";
 import { storage } from '../../../firebase';
 import { v4 } from "uuid";
 import { Modal, Input, Select } from "antd";
 import { useToastSuccess, useToastError } from "../../../utils/toastSettings";
 import { publicRequest } from "../../../requestMethods";
-import * as XLSX from 'xlsx/xlsx.mjs';
 
 function CreateVocab({
     dataTest,
@@ -18,95 +16,60 @@ function CreateVocab({
     isOpenModal,
     handleOpenChange,
 }) {
-    const [dataArray, setDataArray] = useState([]);
-    const [imageVocab, setImageVocab] = useState([]);
+    const [imageFileUpload, setImageFileUpload] = useState({ file: null, fileType: 'jpg' });
+    const [exelFileUpload, setExelFileUpload] = useState({ file: null, fileType: 'exel' });
+    const data = [];
     const [testTilte, setTestTilte] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [finalData, setFinalData] = useState(null);
 
-    const handleGetVocabImage = async () => {
-        const imageRefs = await listAll(ref(storage, 'Vocab')); // Lấy danh sách các file trong thư mục
-        console.log(imageRefs);
-        const imageUrls = await Promise.all(
-            imageRefs.items.map(async (imageRef) => {
-                const url = await getDownloadURL(imageRef); // Tải xuống từng ảnh
-                return {
-                    image: url,
-                };
-            })
-        );
-        console.log("images url", imageUrls);
-        setImageVocab(imageUrls)
+    const uploadFile = (fileData) => {
+        return new Promise((resolve, reject) => {
+            if (fileData.file == null) {
+                resolve(null);
+                return;
+            }
 
-    }
+            const fileRef = ref(storage, `Vocabularys/${fileData.fileType}/${testTilte}/${fileData.file.name}`);
+            uploadBytes(fileRef, fileData.file)
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
+                });
 
-    useEffect(() => {
-        handleGetVocabImage();
-    }, []);
 
+        });
+    };
 
     function closeModal() {
         handleOpenChange(false);
     }
-    const handleFileUpload = (event) => {
-        const file = event.target.files[0];
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-
-            jsonData.forEach((row) => {
-                const rowData = {
-                    number: row[0],
-                    word: row[1],
-                    type: row[2],
-                    transcribe: row[3],
-                    meaning: row[4],
-                };
-
-                dataArray.push(rowData);
-            });
-            const mergedArray = dataArray.map((item, index) => {
-                return {
-                    ...item,
-                    ...imageVocab[index],
-                };
-            });
-            console.log(mergedArray);
-            setFinalData(mergedArray);
-
-        };
-
-        reader.readAsArrayBuffer(file);
-    };
-
-    const handleCreateVocab = async () => {
+    const handleCreateReading = async () => {
         try {
-            if (dataArray.length !== 0) {
-
-                for (let i = 0; i < finalData.length; ++i) {
-                    finalData[i].testName = testTilte;
-                    try {
-                        const res = await publicRequest.post(
-                            `/vocabularys`, finalData[i]);
-                        if (res && res.status === 200) {
-                            console.log("Gét gô");
-                            useToastSuccess(res.message);
-                        } else {
-                            console.log("Not so good");
-                        }
-                    } catch (error) {
-                        console.log(error);
+            if (exelFileUpload.file !== null && imageFileUpload.file !== null) {
+                const pdfUploadPromise = await uploadFile(exelFileUpload);
+                await uploadFile(imageFileUpload);
+                useToastSuccess("Upload đề thành công !");
+                useToastSuccess("Hệ thống đang xử lý file");
+                console.log(data);
+                try {
+                    const res = await publicRequest.post(
+                        `/vocabularys`, {
+                        testName: testTilte,
+                        data: data
+                    });
+                    if (res && res.status === 200) {
+                        console.log("Gét gô");
+                        useToastSuccess(res.message);
+                    } else {
+                        console.log("Not so good");
                     }
+                } catch (error) {
+                    console.log(error);
                 }
-
             } else {
                 useToastError("Chưa upload đủ file");
                 return;
@@ -118,20 +81,19 @@ function CreateVocab({
 
     return (
         <Modal
-            title={`Thêm mới bài ${testName} `}
+            title={`Thêm mới list từ vựng`}
             open={isOpenModal}
             onCancel={closeModal}
-            onOk={handleCreateVocab}
-            confirmLoading={isLoading}
+            onOk={handleCreateReading}
             cancelText="Hủy"
             okText="Xác nhận"
             width={570}
         >
             <div className="App">
                 <div style={{ marginBottom: 20 }}>
-                    <span>Tên chủ đề từ vựng </span>
+                    <span>Tên list từ vựng </span>
                     <Input
-                        placeholder="Ví dụ: Education, School,..."
+                        placeholder=" ví dụ: Nature"
                         autoComplete="off"
                         type="text"
                         onInput={(event) => {
@@ -145,11 +107,31 @@ function CreateVocab({
                     />
                 </div>
 
+
+
                 <div className="input" style={{ marginBottom: 10 }}>
-                    <div>Chọn file list từ vựng </div>
+                    <div>Chọn file từ vựng </div>
                     <input
                         type="file"
-                        onChange={handleFileUpload}
+                        onChange={(event) => {
+                            setExelFileUpload({
+                                file: event.target.files[0],
+                                fileType: 'exel',
+                            });
+                        }}
+                    />
+
+                </div>
+                <div className="input" style={{ marginBottom: 10 }}>
+                    <div>Chọn file hình ảnh </div>
+                    <input
+                        type="file"
+                        onChange={(event) => {
+                            setImageFileUpload({
+                                file: event.target.files[0],
+                                fileType: 'jpg',
+                            });
+                        }}
                     />
                 </div>
 

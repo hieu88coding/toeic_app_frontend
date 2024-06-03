@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef, forwardRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import "./readingPage.scss";
+import "./ReadingPage.scss";
 import { usePlyr } from "plyr-react";
 import Countdown from 'react-countdown';
 import "plyr-react/plyr.css";
@@ -15,8 +15,10 @@ import {
 } from "firebase/storage";
 import { storage } from '../../../firebase';
 import AnswerSheet from "../../../components/answerSheet/AnswerSheet";
-import ExamSheet from "../../../components/examSheet/ExamSheet";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import ReadingSheet from "../../../components/examSheet/ReadingSheet";
+import CustomAnswerSheet from "../../../components/answerSheet/CustomAnswerSheet";
 
 
 const Timer = ({ hours, minutes, seconds, completed }) => {
@@ -36,150 +38,143 @@ const Timer = ({ hours, minutes, seconds, completed }) => {
         );
     }
 };
-const audioOptions = undefined;
-const CustomPlyrInstance = forwardRef((props, ref) => {
-    const { source, options = null } = props;
-    const raptorRef = usePlyr(ref, { options, source });
-    useEffect(() => {
-        const { current } = ref;
-        if (current.plyr.source === null) return;
 
-        const api = current;
-        api.plyr.on("ready", () => { });
-        api.plyr.on("canplay", () => {
-            // api.plyr.play();
-        });
-        api.plyr.on("ended", () => { });
-    });
-
-    const handleClick = () => {
-        raptorRef.current.play();
-    };
-
-    return (
-        <audio
-            ref={raptorRef}
-            className="plyr-react plyr"
-            muted={true}
-            onClick={handleClick}
-        />
-    );
-});
 
 const ReadingPage = () => {
-    const refAudio = useRef(null);
     const [open, setOpen] = useState(true);
-    const [stats, setStats] = useState([]);
+    const [data, setData] = useState([]);
     const [media, setMedia] = useState([]);
-    const testCode = useLocation().pathname.split("/")[2];
-    const level = useLocation().pathname.split("/")[3];
+    const testCode = useLocation().pathname.split("/")[3];
+    const partName = useLocation().pathname.split("/")[4];
     const navigate = useNavigate();
-    const [userAnswer, setUserAnswer] = useState({});
-    const [isSubmit, setIsSubmit] = useState(false);
+    const [partEnglishName, setPartEnglishName] = useState('');
+    const partDetection = () => {
+        switch (testCode) {
+            case 'part1':
+                setPartEnglishName('Part 1 - Mô tả tranh')
+                break;
+            case 'part2':
+                setPartEnglishName('Part 2 - Hỏi & Đáp')
+                break;
+            case 'part3':
+                setPartEnglishName('Part 3 - Đoạn hội thoại')
+                break;
+            case 'part4':
+                setPartEnglishName('Part 4 - Bài nói ngắn')
+                break;
+            case 'part5':
+                setPartEnglishName('Part 5 - Hoàn thành câu')
+                break;
+            case 'part6':
+                setPartEnglishName('Part 6 - Hoàn thành đoạn văn')
+                break;
+            case 'part71':
+                setPartEnglishName('Part 7 - Đoạn đơn')
+                break;
+            case 'part72':
+                setPartEnglishName('Part 7 - Đoạn kép')
+                break;
+            case 'part73':
+                setPartEnglishName('Part 7 - Đoạn ba')
+                break;
 
-    const updateSelectedAnswers = (questionNumber, answer) => {
-        setUserAnswer((prevUserAnswers) => {
-            if (prevUserAnswers[questionNumber] === answer) {
-                const newSelectedAnswers = { ...prevUserAnswers };
-                delete newSelectedAnswers[questionNumber];
-                return newSelectedAnswers;
-            } else {
-                return {
-                    ...prevUserAnswers,
-                    [questionNumber]: answer,
-                };
-            }
-        });
-    };
-
-    const handleAnswerSubmit = () => {
-        if (isSubmit) {
-            console.log("Da submit", userAnswer);
-            const data = {
-                pdf: media.pdf,
-                rightAnswer: media.answer,
-                userAnswer: userAnswer
-            }
-            localStorage.setItem('userExamResult', JSON.stringify(data));
-            navigate(`/result/${testCode}/0`);
+            default:
+                setPartEnglishName('default')
+                break;
         }
-    };
-    const handleSubmit = () => {
-        setIsSubmit(true);
     }
+    useEffect(() => {
+        partDetection();
+    }, []);
+
     const hideModal = () => {
         setOpen(false);
     };
 
     const notReady = () => {
-        navigate("/");
+        navigate("/readings/practice/part5");
     }
 
-    const getStats = async () => {
-        try {
-            const res = await publicRequest.get(`/readings/${testCode}/${level}`);
-            console.log(res.data);
-            const { testName, correctAnswer, pdf } = res.data;
-            const answerList = await axios.get(`${correctAnswer}`);
-            const imageRefs = await listAll(ref(storage, res.data.images)); // Lấy danh sách các file trong thư mục
-            const imageUrls = await Promise.all(
-                imageRefs.items.map(async (imageRef) => {
-                    const url = await getDownloadURL(imageRef); // Tải xuống từng ảnh
-                    return url;
-                })
-            );
-            const stats = imageUrls.map((url, index) => ({
-                name: imageRefs.items[index].name,
-                url: url,
-            }));
-            stats.sort((a, b) => {
-                const indexA = parseInt(a.name.split('_')[1]);
-                const indexB = parseInt(b.name.split('_')[1]);
-                return indexA - indexB;
-            });
-            setStats(stats);
-            setMedia({
-                testName: testName,
-                pdf: pdf,
-                answer: answerList.data,
-            });
-        } catch (error) {
-            console.error("Lỗi khi lấy danh sách ảnh:", error);
+    const fetchData = async () => {
+        let exelRefs = await listAll(ref(storage, `Readings/exel/${partEnglishName}/${partName}`));
+        let exelUrls = await Promise.all(
+            exelRefs.items.map(async (exelRef) => {
+                const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                return url;
+            })
+        );
+        let answerRefs = await listAll(ref(storage, `Readings/json/${partEnglishName}/${partName}`));
+        let answerUrls = await Promise.all(
+            answerRefs.items.map(async (exelRef) => {
+                const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                return url;
+            })
+        );
+        let temp = [];
+        if (exelUrls.length !== 0) {
+            try {
+                const response = await axios.get(`${exelUrls}`, {
+                    responseType: 'arraybuffer',
+                });
+                const data = new Uint8Array(response.data);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                let formattedData = [];
+                if (testCode === 'part71' || testCode === 'part72' || testCode === 'part73') {
+                    formattedData = jsonData.slice(1).map((item, index) => ({
+                        key: String(index + 1),
+                        number: item[0],
+                        para: item[1],
+                        question: item[2],
+                        answerA: item[3],
+                        answerB: item[4],
+                        answerC: item[5],
+                        answerD: item[6],
+                    }));
+                } else {
+                    formattedData = jsonData.slice(1).map((item, index) => ({
+                        key: String(index + 1),
+                        number: item[0],
+                        question: item[1],
+                        answerA: item[2],
+                        answerB: item[3],
+                        answerC: item[4],
+                        answerD: item[5],
+                    }));
+                }
+                temp.push(formattedData);
+            } catch (error) {
+                console.error('Error fetching Excel data:', error);
+            }
         }
+        setData({
+            exel: temp,
+            answer: answerUrls[0],
+        });
+
+
     };
     useEffect(() => {
-        getStats();
-    }, []);
+        fetchData();
+    }, [partEnglishName]);
 
-    useEffect(() => {
-        if (isSubmit) {
-            handleAnswerSubmit();
-        }
-    }, [isSubmit]);
+
+
 
     const topExamBar = useMemo(
         () => (
             <div className="readingPageContainer" style={{ overflow: 'hidden' }}>
-                <Link to={'/'} className="closeBtn">
+                <Link to={'/readings/practice/part5'} className="closeBtn">
                     <div >
                         <CloseOutlined style={{ paddingRight: 10 }} /> Đóng
                     </div>
                 </Link>
 
                 <div className="middleHeader">
-                    <div className="middleTitle">ETS TOEIC {media && media.testName}</div>
+                    <div className="middleTitle">ETS TOEIC {partEnglishName}</div>
                     <div className="middleMp3">
-                        {(
-                            <CustomPlyrInstance ref={refAudio} type="audio" source={{
-                                type: "audio",
-                                sources: [
-                                    {
-                                        type: "audio/mp3",
-                                        src: media.audio,
-                                    },
-                                ],
-                            }} options={audioOptions} />
-                        )}
+
                     </div>
                 </div>
 
@@ -199,20 +194,6 @@ const ReadingPage = () => {
                     </div>
                 }
 
-                {!open &&
-                    <div>
-                        <Button
-                            style={{
-                                width: '103%', height: '100%',
-                                borderBottom: 'none !important',
-                                borderTop: 'none !important'
-                            }}
-                            onClick={handleSubmit}
-                            icon={<CheckOutlined />}>Nộp bài</Button>
-                    </div>
-                }
-
-
             </div>
         ),
         [open] // Rỗng để chỉ render một lần duy nhất
@@ -220,10 +201,10 @@ const ReadingPage = () => {
     const mainContent = useMemo(
         () => (
             <div className="mainExamContainer" style={{ overflow: 'hidden' }}>
-                <ExamSheet typeSheet="reading" data={stats} />
-                <AnswerSheet typeSheet="reading" userAnswers={userAnswer} updateSelectedAnswers={updateSelectedAnswers} />
+                <ReadingSheet typeSheet="exam" data={data} testName={testCode} />
+                <CustomAnswerSheet typeSheet="exam" data={data} />
             </div>
-        ), [stats, userAnswer]
+        ), [data]
     );
     return (
         <div style={{ overflowY: 'hidden' }}>

@@ -16,20 +16,21 @@ function CreateReading({
     isOpenModal,
     handleOpenChange,
 }) {
-    const [pdfFileUpload, setPdfFileUpload] = useState({ file: null, fileType: 'pdf' });
+    const [exelFileUpload, setExelFileUpload] = useState({ file: null, fileType: 'exel' });
     const [jsonFileUpload, setJsonFileUpload] = useState({ file: null, fileType: 'json' });
     const data = [];
     const [testTilte, setTestTilte] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState(450);
+    const [testCategory, setTestCategory] = useState("");
+    const [selectedPart, setSelectedPart] = useState('Part 5 - Hoàn thành câu');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLevelChange = (value) => {
         setSelectedLevel(value);
     };
-
-    function closeModal() {
-        handleOpenChange(false);
-    }
+    const handlePartChange = (value) => {
+        setSelectedPart(value);
+    };
     const uploadFile = (fileData) => {
         return new Promise((resolve, reject) => {
             if (fileData.file == null) {
@@ -37,48 +38,67 @@ function CreateReading({
                 return;
             }
 
-            const fileRef = ref(storage, `${fileData.fileType}/${fileData.file.name + v4()}`);
+            const fileRef = ref(storage, `Readings/${fileData.fileType}/${selectedPart}/${testTilte}/${fileData.file.name}`);
             uploadBytes(fileRef, fileData.file)
-                .then((snapshot) => {
-                    getDownloadURL(snapshot.ref)
-                        .then((url) => {
-                            const fileDataWithUrl = {
-                                dataType: fileData.fileType,
-                                fileUrl: url,
-                            };
-
-                            data.push(fileDataWithUrl);
-                            resolve(fileDataWithUrl);
-                        })
-                        .catch((error) => {
-                            reject(error);
-                        });
-                })
-                .catch((error) => {
-                    reject(error);
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
                 });
+
+
+        });
+    };
+    const uploadAnswer = (fileData) => {
+        return new Promise((resolve, reject) => {
+            if (fileData.file == null) {
+                resolve(null);
+                return;
+            }
+
+            const fileRef = ref(storage, `Readings/json/${selectedPart}/${testTilte}/${fileData.file.name}`);
+            uploadBytes(fileRef, fileData.file)
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
+                });
+
+
         });
     };
 
+    function closeModal() {
+        handleOpenChange(false);
+    }
     const handleCreateReading = async () => {
         try {
-            if (pdfFileUpload.file !== null && jsonFileUpload !== null) {
-                const pdfUploadPromise = uploadFile(pdfFileUpload);
-                const jsonUploadPromise = uploadFile(jsonFileUpload);
+            if (exelFileUpload.file !== null && jsonFileUpload.file !== null) {
+                const pdfUploadPromise = await uploadFile(exelFileUpload);
+                const jsonUploadPromise = await uploadAnswer(jsonFileUpload);
 
-                await Promise.all([pdfUploadPromise, jsonUploadPromise]);
-                message.success("Upload đề thành công !");
+                useToastSuccess("Upload đề thành công !");
+                useToastSuccess("Hệ thống đang xử lý file");
                 console.log(data);
                 try {
                     const res = await publicRequest.post(
                         `/readings`, {
                         level: selectedLevel,
                         testName: testTilte,
+                        part: selectedPart,
                         data: data
                     });
                     if (res && res.status === 200) {
                         console.log("Gét gô");
-                        message.success(res.message);
+                        useToastSuccess(res.message);
                     } else {
                         console.log("Not so good");
                     }
@@ -86,7 +106,7 @@ function CreateReading({
                     console.log(error);
                 }
             } else {
-                message.error("Chưa upload đủ file");
+                useToastError("Chưa upload đủ file");
                 return;
             }
         } catch (error) {
@@ -96,7 +116,7 @@ function CreateReading({
 
     return (
         <Modal
-            title={`Thêm mới bài ${testName} `}
+            title={`Thêm mới bài Reading`}
             open={isOpenModal}
             onCancel={closeModal}
             onOk={handleCreateReading}
@@ -107,22 +127,37 @@ function CreateReading({
         >
             <div className="App">
                 <div style={{ marginBottom: 20 }}>
-                    <span>Tên bài test </span>
-                    <Input
-                        placeholder=" Cú pháp: Reading + number, ví dụ: Reading1"
-                        autoComplete="off"
-                        type="text"
-                        onInput={(event) => {
-                            const inputValue = event.target.value;
-                            const capitalizedValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
-                            event.target.value = capitalizedValue;
+                    <div>Part</div>
+                    <Select
+                        defaultValue={'Part 5 - Hoàn thành câu'}
+                        style={{
+                            width: 200,
                         }}
-                        onChange={(event) => {
-                            setTestTilte(event.target.value);
-                        }}
+                        onChange={handlePartChange}
+                        options={[
+                            {
+                                value: 'Part 5 - Hoàn thành câu',
+                                label: 'Part 5 - Hoàn thành câu',
+                            },
+                            {
+                                value: 'Part 6 - Hoàn thành đoạn văn',
+                                label: 'Part 6 - Hoàn thành đoạn văn',
+                            },
+                            {
+                                value: 'Part 7 - Đoạn đơn',
+                                label: 'Part 7 - Đooạn đơn',
+                            },
+                            {
+                                value: 'Part 7 - Đoạn kép',
+                                label: 'Part 7 - Đoạn kép',
+                            },
+                            {
+                                value: 'Part 7 - Đoạn ba',
+                                label: 'Part 7 - Đoạn ba',
+                            },
+                        ]}
                     />
                 </div>
-
                 <div style={{ marginBottom: 20 }}>
                     <div>Level của bài test</div>
                     <Select
@@ -183,15 +218,33 @@ function CreateReading({
                         ]}
                     />
                 </div>
+                <div style={{ marginBottom: 20 }}>
+                    <span>Tên bài test </span>
+                    <Input
+                        placeholder=" Cú pháp: Test + number, ví dụ: Test1"
+                        autoComplete="off"
+                        type="text"
+                        onInput={(event) => {
+                            const inputValue = event.target.value;
+                            const capitalizedValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+                            event.target.value = capitalizedValue;
+                        }}
+                        onChange={(event) => {
+                            setTestTilte(event.target.value);
+                        }}
+                    />
+                </div>
+
+
 
                 <div className="input" style={{ marginBottom: 10 }}>
-                    <div>Chọn file pdf </div>
+                    <div>Chọn file đề bài </div>
                     <input
                         type="file"
                         onChange={(event) => {
-                            setPdfFileUpload({
+                            setExelFileUpload({
                                 file: event.target.files[0],
-                                fileType: 'pdf',
+                                fileType: 'exel',
                             });
                         }}
                     />

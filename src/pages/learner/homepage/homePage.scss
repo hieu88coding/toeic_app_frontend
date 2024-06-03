@@ -3,8 +3,162 @@
     width: 70%;
     margin: 0 auto;
 
-    .homePageContent {
+    .homePageHeader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .homePageDesc {
+            text-align: center;
+        }
+    }
+
+    .recentTab {
         display: flex;
         flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 100px;
+        margin-bottom: 50px;
+
+        .recentCard {
+
+
+            .recentTitle {
+                color: #1677ff;
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .recentPart {
+                color: black;
+                font-size: 22px;
+                font-weight: 600;
+            }
+
+            .recentExercise {
+                color: #5a6173;
+                font-size: 18px;
+                font-weight: 400;
+            }
+
+            .partNumber {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin-top: 30px;
+                margin-bottom: 30px;
+
+                .partCircle {
+                    height: 48px;
+                    background-color: #1677ff;
+                    color: #fff;
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-weight: 700;
+                    font-size: 20px;
+                    aspect-ratio: 1;
+                    line-height: normal;
+                }
+
+                .partName {
+                    font-weight: 600;
+                    font-size: 18px;
+                    margin-left: 20px;
+                }
+            }
+
+            .recentFooter {
+                display: flex;
+                flex-direction: row;
+
+                button {
+                    width: 50%;
+                }
+            }
+        }
     }
+
+    .homePageSkillTabs {
+        overflow: hidden;
+        width: 100%;
+
+        .homePageSkillNav {
+            font-weight: 600;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .homePageSkillCards {
+            .skillCardContainer {
+                transition: transform .5s;
+                display: inline-flex;
+                gap: 37px;
+
+                .skillCardList {
+                    width: 1063px;
+
+                    .skillCardItem {
+                        .skillCardTitle {
+                            font-size: 25px;
+                            font-weight: 600;
+                            display: block;
+                            width: 13%;
+                            position: relative;
+
+                            &::after {
+                                content: "";
+                                width: 100%;
+                                position: absolute;
+                                bottom: -4px;
+                                height: 4px;
+                                left: 0;
+                                border-radius: 3px;
+                                background-color: #1677ff;
+                            }
+                        }
+
+                        .skillCard {
+                            flex-wrap: wrap;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-between;
+
+                            .topic-item-content {
+                                .topic-item-name {
+                                    font-size: 20px;
+                                    font-weight: 600;
+                                }
+
+                                .topic-item-detail {
+                                    .detail-item-box {
+                                        .num-question-box {
+                                            font-size: 16px;
+                                            font-weight: 400;
+                                            display: flex;
+                                            flex-direction: row;
+
+                                            .num-question {
+                                                font-weight: 600;
+                                                margin-left: 10px;
+                                                margin-right: 5px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+    }
+
 }

@@ -1,0 +1,19 @@
+.customAnswerSheetContainer {
+
+    margin-top: 60px;
+    width: 16vw;
+
+    .question {
+
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+
+        .questAns {
+            font-size: 16px;
+            font-weight: bold;
+            padding-left: 10px;
+        }
+    }
+}

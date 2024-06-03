@@ -6,9 +6,12 @@ import { Space, Card, Button } from "antd";
 import { CloseOutlined, CheckOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import Scrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
+import { useToastError, useToastSuccess } from "../../utils/toastSettings";
+import { publicRequest } from "../../requestMethods";
 
-const AnswerSheet = ({ typeSheet, rightAnswer }) => {
+const AnswerSheet = ({ typeSheet, data }) => {
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('userInfo'))
     const [userAnswer, setUserAnswer] = useState({});
     const testCode = useLocation().pathname.split("/")[2];
     const partName = useLocation().pathname.split("/")[3];
@@ -26,14 +29,17 @@ const AnswerSheet = ({ typeSheet, rightAnswer }) => {
             }
         });
     };
-    const handleAnswerSubmit = () => {
+    const handleAnswerSubmit = async () => {
         console.log("Da submit", userAnswer);
-        const data = {
-            rightAnswer: rightAnswer,
+        const submitData = {
+            testData: data,
             userAnswer: userAnswer
         }
-        localStorage.setItem('userExamResult', JSON.stringify(data));
-        navigate(`/result/${testCode}/${partName}`);
+        navigate(`/result/${testCode}/${partName}`, {
+            state: {
+                submitData: submitData,
+            }
+        });
     };
     const getQuestionCountsAndStartNumbers = (partName) => {
         if (typeSheet === "exam") {

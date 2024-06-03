@@ -46,20 +46,23 @@ export const Part3 = (props) => {
     const images = props.images;
     const audio = props.audio;
     const exel = props.exel;
+    console.log(exel);
     const chunks = [];
-    for (let i = 0; i < exel.length; i += 3) {
-        chunks.push(exel.slice(i, i + 3));
+    if (exel !== undefined) {
+        for (let i = 0; i < exel.length; i += 3) {
+            chunks.push(exel.slice(i, i + 3));
+        }
     }
     const refAudio = useRef(null);
     return (
         <div>
-            <Card title={null} style={{ width: '98%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
+            <Card title={null} style={{ width: '100%', fontSize: 16, marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
                 <div className="part3-instruction" style={{ fontSize: 16 }}>
                     <b>Part 3.</b> You will hear some conversations between two people. You will be asked to answer three questions about what the speakers say in each conversation. Select the best response to each question and mark the letter (A), (B), (C), or (D) on your answer sheet. The conversations will not be printed in your test book and will be spoken only one time.
                 </div>
             </Card>
             {
-                audio.length !== 0 && audio.slice(31, 42).map((audio, index) => (
+                !props.isPart && audio.length !== 0 && audio.slice(31, 42).map((audio, index) => (
                     <div className="part3-container" style={{ marginBottom: 50, fontSize: 16 }} key={`part3${index + 99}`}>
                         <div className="part3-content">
 
@@ -100,7 +103,7 @@ export const Part3 = (props) => {
 
                 ))}
             {
-                audio.length !== 0 && audio.slice(42, 44).map((audio, index) => (
+                !props.isPart && audio.length !== 0 && audio.slice(42, 44).map((audio, index) => (
                     <div className="part3-container" style={{ marginBottom: 50, fontSize: 16 }} key={`part3${index}`}>
                         <div className="part3-content">
                             <div className="part3-audio" style={{ width: '100%', display: 'flex', flexDirection: `column` }}>
@@ -143,6 +146,48 @@ export const Part3 = (props) => {
 
                 ))}
 
+
+            {
+                props.isPart && audio.length !== 0 && audio.map((audio, index) => (
+                    <div className="part3-container" style={{ marginBottom: 50, fontSize: 16 }} key={`part3${index + 99}`}>
+                        <div className="part3-content">
+
+                            <div className="part3-audio" style={{ width: '100%', display: 'flex', flexDirection: `column` }}>
+                                <CustomPlyrInstance key={index} ref={refAudio} type="audio" source={{
+                                    type: "audio",
+                                    sources: [
+                                        {
+                                            type: "audio/mp3",
+                                            src: audio,
+                                        },
+                                    ],
+                                }} options={audioOptions} />
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', padding: 20, marginTop: 30 }}>
+                                {chunks.length !== 0 && chunks[index].map((exel, chunkIndex) => (
+                                    <div className="part3-question" key={`question${exel.number}`} style={{
+                                        gridColumn: chunkIndex % 2 !== 0 ? '2 / 3' : '1',
+                                        marginBottom: 20
+                                    }}>
+                                        <div className="part3-title" style={{ maxWidth: '80%', fontWeight: 'bold', marginBottom: 10 }}>Question {exel.number}. {exel.question}</div>
+                                        <div className="part3-answer" style={{ marginBottom: 10 }}>
+                                            <div>{exel.answerA}</div>
+                                            <div>{exel.answerB}</div>
+                                            <div>{exel.answerC}</div>
+                                            <div>{exel.answerD}</div>
+                                        </div>
+
+                                    </div>
+
+
+                                ))}
+
+                            </div>
+                            <Divider />
+                        </div>
+                    </div>
+
+                ))}
         </div>
 
 

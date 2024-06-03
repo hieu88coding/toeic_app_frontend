@@ -1,0 +1,142 @@
+:root {
+    background-color: white !important;
+}
+
+.main-container {
+    overflow-y: hidden;
+    background-color: white;
+    height: 100vh;
+    background: url(https://sapo.dktcdn.net/sso-service/images/background-bottom-pos-app.svg) no-repeat;
+    background-size: cover;
+
+
+
+
+
+
+    .left-logo {
+        display: flex;
+        align-items: center;
+        justify-items: center;
+
+        .sapo-logo {
+            width: 27vw;
+            height: 20vh;
+            background-image: url("../../assets/toeic88Logo.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 5s;
+        }
+    }
+
+    .form-box {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .form-title {
+            height: 10%;
+            color: #0078eb;
+            font-weight: 700;
+        }
+
+        .form-input-text {
+            height: 70%;
+        }
+    }
+
+
+}
+
+@media screen and (max-width: 900px)and (min-height:1000px) {
+    main {
+        .MuiPaper-root {
+            height: 35vh !important;
+        }
+    }
+
+    .sapo-logo {
+        width: 30vw !important;
+        height: 9vh !important;
+        position: absolute !important;
+        left: 35vw !important;
+        top: 4vh !important;
+
+    }
+}
+
+@media screen and (max-width: 900px)and (max-height:999px) {
+    main {
+        .MuiPaper-root {
+            height: 55vh !important;
+        }
+    }
+
+    .sapo-logo {
+        width: 30vw !important;
+        height: 9vh !important;
+        position: absolute !important;
+        left: 39vw !important;
+        top: 14vh !important;
+
+    }
+}
+
+@media screen and (max-width: 415px)and (min-height:800px) {
+    main {
+        .MuiPaper-root {
+            height: 40vh !important;
+        }
+    }
+
+    .sapo-logo {
+        width: 35vw !important;
+        height: 9vh !important;
+        position: absolute !important;
+        left: 33vw !important;
+        top: 10vh !important;
+
+    }
+
+}
+
+@media screen and (max-width: 415px)and (max-height:799px) {
+    main {
+        .MuiPaper-root {
+            height: 55vh !important;
+        }
+    }
+
+    .sapo-logo {
+        width: 35vw !important;
+        height: 9vh !important;
+        position: absolute !important;
+        left: 33vw !important;
+        top: 10vh !important;
+
+    }
+
+}
+
+@media screen and (min-width: 912px) and (min-height:1000px) {
+    main {
+        .MuiPaper-root {
+            height: 27vh !important;
+        }
+    }
+
+    .sapo-logo {
+        display: flex;
+        align-items: center;
+        width: 32vw !important;
+        height: 9vh !important;
+        position: absolute !important;
+        left: 14vw !important;
+        top: 20vh !important;
+
+    }
+
+}

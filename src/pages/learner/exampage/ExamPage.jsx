@@ -17,6 +17,7 @@ import { storage } from '../../../firebase';
 import AnswerSheet from "../../../components/answerSheet/AnswerSheet";
 import ExamSheet from "../../../components/examSheet/ExamSheet";
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 
 const Timer = ({ hours, minutes, seconds, completed }) => {
@@ -69,7 +70,7 @@ const CustomPlyrInstance = forwardRef((props, ref) => {
 const ExamPage = () => {
     const refAudio = useRef(null);
     const [open, setOpen] = useState(true);
-    const [stats, setStats] = useState([]);
+    const [data, setData] = useState([]);
     const [media, setMedia] = useState([]);
     const testCode = useLocation().pathname.split("/")[2];
     const partName = useLocation().pathname.split("/")[3];
@@ -82,29 +83,112 @@ const ExamPage = () => {
     const notReady = () => {
         navigate("/mocks");
     }
+    const getAudioNumber = (link) => {
+        const startIndex = link.indexOf("audio_") + 6;
+        const endIndex = link.indexOf(".mp3");
+        const audioNumber = link.slice(startIndex, endIndex);
 
+        return parseInt(audioNumber);
+    };
+    const getImagesNumber = (link) => {
+        const startIndex = link.indexOf("images_") + 6;
+        const endIndex = link.indexOf(".jpg");
+        const audioNumber = link.slice(startIndex, endIndex);
 
+        return parseInt(audioNumber);
+    };
+    const compareAudioLinks = (link1, link2) => {
+        const audioNumber1 = getAudioNumber(link1);
+        const audioNumber2 = getAudioNumber(link2);
 
-    const getStats = async () => {
-        try {
-            const res = await publicRequest.get(`/mockTests/${testCode}`);
-            console.log(res.data);
-            const { testName, audiomp3, correctAnswer, pdf, images } = res.data;
-            const answerList = await axios.get(`${correctAnswer}`);
-            setMedia({
-                testName: testName,
-                pdf: pdf,
-                audio: audiomp3,
-                answer: answerList,
-                images: images
+        return audioNumber1 - audioNumber2;
+    };
+    const compareImagesLinks = (link1, link2) => {
+        const audioNumber1 = getImagesNumber(link1);
+        const audioNumber2 = getImagesNumber(link2);
+
+        return audioNumber1 - audioNumber2;
+    };
+
+    const fetchData = async () => {
+        let exelRefs = await listAll(ref(storage, `exel/${testCode}`));
+        let exelUrls = await Promise.all(
+            exelRefs.items.map(async (exelRef) => {
+                const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                return url;
+            })
+        );
+        let audioRefs = await listAll(ref(storage, `mp3/${testCode}`));
+        let audioUrls = await Promise.all(
+            audioRefs.items.map(async (exelRef) => {
+                const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                return url;
+            })
+        );
+        let imagesRefs = await listAll(ref(storage, `jpg/${testCode}`));
+        let imagesUrls = await Promise.all(
+            imagesRefs.items.map(async (exelRef) => {
+                const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                return url;
+            })
+        );
+        audioUrls.sort(compareAudioLinks);
+        imagesUrls.sort(compareImagesLinks);
+        let answerRefs = await getDownloadURL(ref(storage, `json/${testCode}/${testCode}_answer.xlsx`));
+        let temp = [];
+        if (exelUrls.length !== 0) {
+            for (let i = 0; i < exelUrls.length; i++) {
+                try {
+                    const response = await axios.get(`${exelUrls[i]}`, {
+                        responseType: 'arraybuffer',
+                    });
+                    const data = new Uint8Array(response.data);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    let formattedData = [];
+                    if (i === 4) {
+                        formattedData = jsonData.slice(1).map((item, index) => ({
+                            key: String(index + 1),
+                            number: item[0],
+                            para: item[1],
+                            question: item[2],
+                            answerA: item[3],
+                            answerB: item[4],
+                            answerC: item[5],
+                            answerD: item[6],
+                        }));
+                    } else {
+                        formattedData = jsonData.slice(1).map((item, index) => ({
+                            key: String(index + 1),
+                            number: item[0],
+                            question: item[1],
+                            answerA: item[2],
+                            answerB: item[3],
+                            answerC: item[4],
+                            answerD: item[5],
+                        }));
+                    }
+
+                    temp.push(formattedData);
+                } catch (error) {
+                    console.error('Error fetching Excel data:', error);
+                }
+            }
+            setData({
+                exel: temp,
+                audio: audioUrls,
+                images: imagesUrls,
+                answer: answerRefs,
             });
-        } catch (error) {
-            console.error("Lỗi khi lấy danh sách ảnh:", error);
         }
+
     };
     useEffect(() => {
-        getStats();
+        fetchData();
     }, []);
+
+
 
 
     const topExamBar = useMemo(
@@ -117,7 +201,7 @@ const ExamPage = () => {
                 </Link>
 
                 <div className="middleHeader">
-                    <div className="middleTitle">ETS TOEIC {media && media.testName}</div>
+                    <div className="middleTitle">ETS TOEIC {testCode}</div>
                     <div className="middleMp3">
 
                     </div>
@@ -146,10 +230,10 @@ const ExamPage = () => {
     const mainContent = useMemo(
         () => (
             <div className="mainExamContainer" style={{ overflow: 'hidden' }}>
-                <ExamSheet typeSheet="exam" data={stats} testName={testCode} />
-                <AnswerSheet typeSheet="exam" rightAnswer={media.answer} />
+                <ExamSheet typeSheet="exam" data={data} testName={testCode} />
+                <AnswerSheet typeSheet="exam" data={data} />
             </div>
-        ), [stats]
+        ), [data]
     );
     return (
         <div style={{ overflowY: 'hidden' }}>

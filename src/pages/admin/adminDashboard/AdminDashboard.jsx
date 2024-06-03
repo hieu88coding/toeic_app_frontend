@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     AudioOutlined,
     BulbOutlined,
@@ -7,12 +7,19 @@ import {
     PieChartOutlined,
     TeamOutlined,
     UserOutlined,
+    CommentOutlined,
+    HighlightOutlined
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { AdminHeader } from '../../../components/adminHeader/AdminHeader';
 import { AdminCRUD } from '../../../components/adminCRUD/AdminCRUD';
 import { MessageOutlined } from '@mui/icons-material';
-//import { AdminAddItem } from '../../../components/adminCRUD/AdminAddItem';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { MockTable } from '../../../components/adminTable/MockTable';
+import { PartTable } from '../../../components/adminTable/PartTable';
+import { SkillTable } from '../../../components/adminTable/SkillTable';
+import { VocabTable } from '../../../components/adminTable/VocabTable';
+import { GrammarTable } from '../../../components/adminTable/GrammarTable';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -23,11 +30,13 @@ function getItem(label, key, icon, children) {
     };
 }
 const items = [
-    getItem('Dashboard', 's1', <PieChartOutlined />),
+    getItem('Dashboard', 'dashboard', <PieChartOutlined />),
     getItem('User', 'sub1', <UserOutlined />),
     getItem('Mock Tests', 'mockTests', <DesktopOutlined />),
     getItem('Listenings', 'listenings', <AudioOutlined />),
     getItem('Readings', 'readings', <TeamOutlined />),
+    getItem('Speakings', 'speakings', <CommentOutlined />),
+    getItem('Writtings', 'writtings', <HighlightOutlined />),
     getItem('Grammars', 'grammars', <FileOutlined />),
     getItem('Vocabularys', 'vocabularys', <MessageOutlined />),
     getItem('Blogs', 'blogs', <BulbOutlined />),
@@ -36,12 +45,19 @@ const AdminDashboard = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
-    const [selectedMenuItem, setSelectedMenuItem] = useState('s1');
-
+    const [selectedMenuItem, setSelectedMenuItem] = useState('dashboard');
+    const testCode = useLocation().pathname?.split("/")[2];
+    const partName = useLocation().pathname?.split("/")[3];
+    const navigate = useNavigate();
     const handleMenuSelect = ({ key }) => {
-        console.log(key);
         setSelectedMenuItem(key);
+        navigate(`/admin/${key}`);
     };
+    // useEffect(() => {
+    //     if (testCode) {
+    //         setSelectedMenuItem(testCode)
+    //     }
+    // }, []);
     return (
         <Layout
             style={{
@@ -50,7 +66,7 @@ const AdminDashboard = () => {
         >
             <Sider>
                 <div className="demo-logo-vertical" />
-                <Menu onSelect={handleMenuSelect} theme="dark" defaultSelectedKeys={['s1']} mode="inline" items={items} />
+                <Menu onSelect={handleMenuSelect} theme="dark" defaultSelectedKeys={testCode ? [`${testCode}`] : ['dashboard']} mode="inline" items={items} />
             </Sider>
             <Layout>
                 <Header
@@ -76,9 +92,43 @@ const AdminDashboard = () => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        {selectedMenuItem !== 's1' &&
+                        {testCode && partName === undefined && (testCode === 'listenings' || testCode === 'readings') &&
+                            // <div>
+                            //     <AdminCRUD itemKey={selectedMenuItem} />
+                            // </div>
+                            <div>
+                                <PartTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
+
+                        {testCode && partName === undefined && (testCode === 'speakings' || testCode === 'writtings') &&
+                            // <div>
+                            //     <AdminCRUD itemKey={selectedMenuItem} />
+                            // </div>
+                            <div>
+                                <SkillTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
+                        {testCode && partName === undefined && (testCode == 'mockTests') &&
                             <div>
                                 <AdminCRUD itemKey={selectedMenuItem} />
+                            </div>
+                        }
+                        {testCode && partName === undefined && (testCode == 'vocabularys') &&
+                            <div>
+                                <VocabTable itemKey={selectedMenuItem} />
+                            </div>
+                        }
+                        {testCode && partName === undefined && (testCode == 'grammars') &&
+                            <div>
+                                <GrammarTable itemKey={selectedMenuItem} />
+                            </div>
+                        }
+                        {partName &&
+                            <div>
+                                <MockTable itemKey={selectedMenuItem} />
                             </div>
 
                         }

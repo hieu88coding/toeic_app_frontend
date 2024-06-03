@@ -49,69 +49,29 @@ function CreateTest({
                     resolve(data);
                 });
 
-            //     if (fileData.fileType !== 'json') {
-            //         let fileDataWithUrl = {
-            //             dataType: fileData.fileType,
-            //             fileUrl: `${fileData.fileType}/${fileData.file.name}`,
-            //         };
-            //         const zipData = fileData.file;
-            //         const unzippedFiles = [];
-            //         const zip = new JSZip();
-            //         //const zipFileData = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+
+        });
+    };
+    const uploadAnswer = (fileData) => {
+        return new Promise((resolve, reject) => {
+            if (fileData.file == null) {
+                resolve(null);
+                return;
+            }
+
+            const fileRef = ref(storage, `json/${testTilte}/${fileData.file.name}`);
+            uploadBytes(fileRef, fileData.file)
+                .then(async (snapshot) => {
+                    const fileUrl = await getDownloadURL(snapshot.ref);
+                    let fileDataWithUrl = {
+                        dataType: fileData.fileType,
+                        fileUrl: fileUrl,
+                    };
+                    data.push(fileDataWithUrl)
+                    resolve(data);
+                });
 
 
-            //         const promises = [];
-
-            //         zip.loadAsync(zipData)
-            //             .then((zip) => {
-            //                 zip.forEach((relativePath, zipEntry) => {
-            //                     if (!zipEntry.dir) {
-            //                         const extractedFileRef = ref(
-            //                             storage,
-            //                             `${fileData.fileType}/${fileData.file.name}/${relativePath}`
-            //                         );
-            //                         const extractedFileStream = new Blob([zipEntry._data.compressedContent]);
-
-            //                         // Xác định loại MIME dựa trên phần mở rộng của tệp tin
-            //                         const contentType = mime.getType(relativePath) || 'application/octet-stream';
-            //                         const metadata = { contentType };
-
-            //                         uploadBytes(extractedFileRef, extractedFileStream, metadata)
-            //                             .then(() => {
-            //                                 unzippedFiles.push(relativePath);
-            //                             })
-            //                             .catch((error) => {
-            //                                 reject(error);
-            //                             });
-            //                     }
-            //                 });
-
-            //                 Promise.all(unzippedFiles)
-            //                     .then(() => {
-            //                         data.push(fileDataWithUrl);
-            //                         resolve(fileDataWithUrl);
-            //                     })
-            //                     .catch((error) => {
-            //                         reject(error);
-            //                     });
-            //             })
-            //             .catch((error) => {
-            //                 // Xử lý lỗi trong quá trình giải nén
-            //                 console.error('Lỗi trong quá trình giải nén:', error);
-            //                 reject(error);
-            //             });
-            //     } else {
-            //         let fileDataJson = {
-            //             dataType: fileData.fileType,
-            //             fileUrl: fileUrl,
-            //         };
-            //         data.push(fileDataJson);
-            //         resolve(fileDataJson);
-            //     }
-            // })
-            // .catch((error) => {
-            //     reject(error);
-            // });
         });
     };
     function closeModal() {
@@ -129,7 +89,7 @@ function CreateTest({
                     const exelUploadPromise = await uploadFile(exelFileUpload);
                     const imageUploadPromise = await uploadFile(imageFileUpload);
                     const audioUploadPromise = await uploadFile(audioFileUpload);
-                    const jsonUploadPromise = await uploadFile(jsonFileUpload);
+                    const jsonUploadPromise = await uploadAnswer(jsonFileUpload);
                     useToastSuccess("Upload đề thành công !");
                     useToastSuccess("Hệ thống đang xử lý file");
                     console.log(data);
@@ -149,7 +109,7 @@ function CreateTest({
                         console.log(error);
                     }
                 } else {
-                    message.error("Chưa upload đủ file");
+                    useToastError("Chưa upload đủ file");
                     return;
                 }
             } catch (error) {

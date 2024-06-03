@@ -5,136 +5,93 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     BorderlessTableOutlined, CheckOutlined, SortAscendingOutlined,
     HistoryOutlined, PlusCircleOutlined, AimOutlined,
-    HighlightOutlined, BarsOutlined
+    HighlightOutlined, BarsOutlined, FireOutlined
 } from "@ant-design/icons";
 import { Menu, Space } from 'antd';
 
-const MegaMenu = () => {
-    const navigate = useNavigate();
-    const [selectedKeys, setSelectedKeys] = useState([]);
-    const onMegaMenuItemClick = (item) => {
-        setSelectedKeys([item.key]);
-        console.log("Selected Mega item", item.key);
-    };
-    useEffect(() => {
-        const handleClick = (e) => {
-            const target = e.target.closest('[data-menu-id]');
-            console.log("target", target);
-            if (target) {
-                const key = target.getAttribute('data-menu-id');
-                const path = target.getAttribute('path');
-                if (key && path) {
-                    navigate(path);
-                }
-            }
-        };
-
-        const menuElements = document.querySelectorAll('.ant-space-item .ant-menu-item');
-        menuElements.forEach((element) => {
-            element.addEventListener('click', handleClick);
-        });
-
-        return () => {
-            menuElements.forEach((element) => {
-                element.removeEventListener('click', handleClick);
-            });
-        };
-    }, []); // Chạy một lần duy nhất khi component được render lần đầu
-
-
-    return (
-        <div style={{ backgroundColor: "white" }}>
-            <Space direction="horizontal" size={"large"}>
-                <Menu
-                    onClick={onMegaMenuItemClick}
-                    selectedKeys={selectedKeys}
-                    style={{
-                        width: "15vw",
-                        boxShadow: "none", border: "none",
-                        color: "#6c757d",
-                        fontSize: "16px",
-                    }}
-                    items={[
-                        {
-                            label: "Đề thi đầy đủ",
-                            key: "mg1",
-                            icon: <BorderlessTableOutlined />,
-                            path: '/mocks',
-                        },
-                        {
-                            label: "Học theo lộ trình",
-                            key: "mg2",
-                            icon: <CheckOutlined />,
-                            path: '/'
-                        },
-                        {
-                            label: "Học từ vựng",
-                            key: "mg3",
-                            icon: <SortAscendingOutlined />,
-                            path: '/vocabulary'
-                        }
-                    ]}
-                />
-                <Menu
-                    onClick={onMegaMenuItemClick}
-                    selectedKeys={selectedKeys}
-                    style={{
-                        width: "15vw", boxShadow: "none", border: "none", color: "#6c757d",
-                        fontSize: "16px",
-                    }}
-                    items={[
-                        {
-                            label: "Học bổ trợ",
-                            key: "mg4",
-                            icon: <HighlightOutlined />,
-                        },
-                        {
-                            label: "Lịch sử học",
-                            key: "mg5",
-                            icon: <HistoryOutlined />
-                        },
-                        {
-                            label: "Tips làm bài",
-                            key: "mg6",
-                            icon: <PlusCircleOutlined />
-                        },
-                    ]}
-                />
-
-            </Space>
-
-        </div>
-    )
-}
 
 
 const items = [
     {
-        label: 'Truy cập nhanh',
-        key: 'm1',
+        label: 'Lộ trình',
+        key: 'roadmap',
+        icon: <HighlightOutlined />,
+    },
+
+    {
+        label: 'Luyện L&R',
+        key: 'lr',
         icon: <BarsOutlined />,
+        // children: [
+        //     {
+        //         label: <MegaMenu />,
+        //         key: "MegaMenu",
+        //         style: {
+        //             height: "fit-content",
+        //             padding: 0,
+        //             backgroundColor: "white",
+
+        //         }
+        //     }
+        // ],
         children: [
             {
-                label: <MegaMenu />,
-                key: "MegaMenu",
-                style: {
-                    height: "fit-content",
-                    padding: 0,
-                    backgroundColor: "white",
-
-                }
+                type: 'group',
+                children: [
+                    {
+                        label: 'Phần 1: Mô tả tranh',
+                        key: 'listenings/practice/part1',
+                    },
+                    {
+                        label: 'Phần 2: Hỏi & Đáp',
+                        key: 'listenings/practice/part2',
+                    },
+                    {
+                        label: 'Phần 3: Đoạn hội thoại',
+                        key: 'listenings/practice/part3',
+                    },
+                    {
+                        label: 'Phần 4: Bài nói ngắn',
+                        key: 'listenings/practice/part4',
+                    },
+                    {
+                        label: 'Phần 5: Hoàn thành câu',
+                        key: 'readings/practice/part5',
+                    },
+                    {
+                        label: 'Phần 6: Hoàn thành đoạn văn',
+                        key: 'readings/practice/part6',
+                    },
+                    {
+                        label: 'Phần 7: Đọc hiểu đoạn đơn',
+                        key: 'readings/practice/part71',
+                    },
+                    {
+                        label: 'Phần 7: Đọc hiểu đoạn kép',
+                        key: 'readings/practice/part72',
+                    },
+                    {
+                        label: 'Phần 2: Đọc hiểu đoạn ba',
+                        key: 'readings/practice/part73',
+                    },
+                ],
             }
         ],
     },
     {
-        label: 'Thi thử',
-        key: 'mocks',
-        icon: <HighlightOutlined />,
+        label: 'Luyện S&W',
+        key: 'sw',
+        icon: <CheckOutlined />,
     },
     {
-        label: 'Học theo lộ trình',
-        key: '',
-        icon: <CheckOutlined />,
+        label: 'Thi thử',
+        key: 'mocks',
+        icon: <FireOutlined />,
+    },
+    {
+        label: "Ngữ pháp",
+        key: 'grammars',
+        icon: <SortAscendingOutlined />
     },
     {
         label: "Học từ vựng",
@@ -142,13 +99,8 @@ const items = [
         icon: <AimOutlined />
     },
     {
-        label: "Học bổ trợ",
-        key: 'm5',
-        icon: <SortAscendingOutlined />
-    },
-    {
-        label: "Tips làm bài",
-        key: 'm6',
+        label: "Blog",
+        key: 'blog',
         icon: <PlusCircleOutlined />
     }
 ];
@@ -158,9 +110,7 @@ export const TopMenu = (props) => {
     const navigate = useNavigate();
     const onClick = (e) => {
         setCurrent(e.key);
-        if (e.key !== 'm1' && e.key !== 'MegaMenu') {
-            navigate(`/${e.key}`);
-        }
+        navigate(`/${e.key}`);
     };
     console.log(props.active);
     return (

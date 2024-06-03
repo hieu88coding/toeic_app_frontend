@@ -16,7 +16,7 @@
         }
 
         .middleHeader {
-            width: 84%;
+            width: 92%;
             display: flex;
             flex-direction: row;
             box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -74,29 +74,102 @@
     .mainContent {
         display: flex;
         flex-direction: row;
+        font-size: 16px;
         justify-content: space-between;
 
-        .row {
-            width: 45%;
+        .leftContent {
+            width: 30%;
+
+
+            .row {
+                display: flex;
+                flex-direction: column;
+                padding: 10px;
+
+                .rowItems {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+
+                    .rowCat {
+                        color: #6c757d;
+
+                        margin-right: 10px;
+                    }
+
+                    .rowData {
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .cardContent {
+
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+
+                div {
+                    margin-bottom: 10px;
+                }
+            }
+        }
+
+        .rightContent {
+            width: 65%;
             display: flex;
             flex-direction: column;
 
-            .rowItems {
+            .upperContent {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: 20px;
+
+                .cardContent {
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+
+                    div {
+                        margin-bottom: 10px;
+                    }
+                }
+            }
+
+            .lowerContent {
+                width: 100%;
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
 
-                .rowCat {
-                    color: #6c757d;
-                    font-size: 16px;
+                .cardContent {
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                     font-weight: bold;
-                }
 
-                .rowData {
-                    font-size: 16px;
+                    div {
+                        margin-bottom: 10px;
+                    }
                 }
             }
+
         }
+
+
+
     }
 
 }

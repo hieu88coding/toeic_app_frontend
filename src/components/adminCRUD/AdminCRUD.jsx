@@ -4,17 +4,14 @@ import {
     Button,
     Table,
     Form,
-    Input,
-    InputNumber,
-    Typography,
-    Upload,
-    Tag,
+    Dropdown,
+    Space
 } from "antd";
-import { DeleteOutlined, SaveOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, SaveOutlined, EditOutlined, RightOutlined } from "@ant-design/icons";
 import { useAuthUser } from "react-auth-kit";
 import { useToastError, useToastSuccess } from "../../utils/toastSettings";
 import { publicRequest, userRequest } from "../../requestMethods";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { WarningModal } from '../warningModal/WarningModal';
 import CustomizedMenus from './CustomizedMenus';
@@ -24,51 +21,15 @@ import CreateReading from '../../pages/admin/createLevel/CreateReading';
 import CreateVocab from '../../pages/admin/createVocab/CreateVocab';
 
 
-const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-}) => {
-    const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-    return (
-        <td {...restProps}>
-            {editing ? (
-                <Form.Item
-                    key={dataIndex}
-                    name={dataIndex}
-                    style={{
-                        margin: 0,
-                    }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Hãy điền ${title}!`,
-                        },
-                    ]}
-                >
-                    {inputNode}
-                </Form.Item>
-            ) : (
-                <div className="centered-cell">{children}</div>
-                // children
-            )}
-        </td>
-    );
-};
 
 const DeleteOneProductBtn = () => {
     return (
         <Button
             type="primary"
             danger
-            style={{ marginRight: "8px" }}
             icon={<DeleteOutlined />}
             ghost
+            style={{ width: '100%' }}
         >
             Xóa
         </Button>
@@ -76,6 +37,7 @@ const DeleteOneProductBtn = () => {
 };
 
 export const AdminCRUD = (props) => {
+    console.log('admin crud');
     const [stats, setStats] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [products, setProducts] = useState([]);
@@ -88,7 +50,18 @@ export const AdminCRUD = (props) => {
     const [editingKey, setEditingKey] = useState("");
     const isEditing = (record) => record.id === editingKey;
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
+    const testCode = useLocation().pathname.split("/")[2];
+
+    const handleDeleteSingleProduct = async (data) => {
+        try {
+            let res = await userRequest.delete(`/mockTests/${data.id}`);
+            if (res.status === 200) {
+                navigate(0);
+            } else return useToastError("Xóa sản phẩm thất bại");
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
     const handleOpenChange = (newValue) => {
@@ -97,15 +70,13 @@ export const AdminCRUD = (props) => {
 
     const getProducts = async () => {
         try {
-            setIsLoading(true);
             let res = await publicRequest.get(
-                `/${props.itemKey}`
+                `/${testCode}`
             );
             console.log(res);
             if (res.status === 200) {
                 setProducts(res.data);
                 // setPage(currentPage);
-                setIsLoading(false);
             } else return useToastError("Something went wrong!");
         } catch (error) {
             console.log(error);
@@ -118,187 +89,69 @@ export const AdminCRUD = (props) => {
         getProducts();
     }, [props.itemKey]);
 
-    const edit = (record) => {
-        form.setFieldsValue({
-            id: "",
-            testName: "",
-            pdf: "",
-            audiomp3: "",
-            correctAnswer: "",
-            ...record,
-        });
-        console.log(record);
-        setEditingKey(record.id);
-    };
-    const cancel = () => {
-        setEditingKey("");
-    };
-    const save = async (key) => {
-        try {
-            const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.id);
-            let item;
-            if (index > -1) {
-                item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                item = newData[index];
-                let res = await handleUpdateProduct(item);
-                console.log(res);
-                if (res) {
-                    return useToastError(res);
-                } else {
-                    setData(newData);
-                    setEditingKey("");
-                }
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey("");
-            }
-        } catch (errInfo) {
-            console.log("Validate Failed:", errInfo);
-        }
-    };
-
-    const handleUpdateProduct = async (data) => {
-        console.log(data);
-        try {
-            // let res = await userRequest.put(`/productShop/${data.id}`, {
-            //     name: data.name,
-            //     quantity: data.quantity,
-            //     price: data.price,
-            //     image: data.image,
-            //     weight: data.weight,
-            //     description: data.description,
-            //     productCode: data.productCode,
-            //     shopOwnerId: authUser().id,
-            // });
-            console.log(res);
-            if (res.data.type === "success") {
-                navigate(0);
-            } else return res.data.message;
-        } catch (error) {
-            console.log(error);
-        }
-    };
     const columns = [
         {
             title: "Test ID",
             dataIndex: "id",
             align: "center",
-            // editable: true,
         },
         {
             title: "Tên Test",
             dataIndex: "testName",
-            editable: true,
             align: "center",
         },
         {
-            title: "File Exel Đề bài",
-            dataIndex: "pdf",
-            editable: true,
-            align: "center",
-            render: (_, record) => (
-                <a href={record.pdf}>Link Exel đề bài</a> // Sử dụng component Link để tạo liên kết
-            ),
-        },
-        {
-            title: "File Audio MP3",
-            dataIndex: "audiomp3",
-            editable: true,
-            align: "center",
-            render: (_, record) => (
-                <a href={record.audiomp3}>Link file Audio MP3</a> // Sử dụng component Link để tạo liên kết
-            ),
-        },
-        {
-            title: "File Đáp án",
-            dataIndex: "correctAnswer",
-            editable: true,
-            align: "center",
-            render: (_, record) => (
-                <a href={record.correctAnswer}>Link Đáp án</a> // Sử dụng component Link để tạo liên kết
-            ),
-        },
-        {
-            title: "Sửa",
             dataIndex: "action",
             width: "18vw",
             align: "center",
             render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span className="flex">
-                        <Button
-                            type="primary"
-                            onClick={() => save(record.id)}
-                            style={{
-                                marginRight: 8,
+                const items = [
+                    {
+                        key: '1',
+                        label: (
+                            <Button
+                                type="primary"
+                                icon={<DeleteOutlined />}
+                                ghost
+                                onClick={() => navigate(`/admin/${props.itemKey}/${record.testName}`)}
+                            >
+                                Xem chi tiết
+                            </Button>
+                        ),
+                    },
+                    {
+                        key: '2',
+                        label: (
+                            <WarningModal
+                                confirmFunction={handleDeleteSingleProduct}
+                                parameters={'troll'}
+                                warningContent={"Bạn chắc muốn xóa sản phẩm này chứ?"}
+                                InitiateComponent={DeleteOneProductBtn}
+                            />
+                        ),
+                    },
+                ];
+                return (
+                    <div>
+                        <Dropdown
+                            menu={{
+                                items,
+                                selectable: true,
                             }}
-                            icon={<SaveOutlined />}
-                            ghost
-                        >
-                            Lưu
-                        </Button>
-
-                        <WarningModal
-                            confirmFunction={handleDeleteSingleProduct}
-                            parameters={record}
-                            warningContent={"Bạn chắc muốn xóa sản phẩm này chứ?"}
-                            InitiateComponent={DeleteOneProductBtn}
-                        />
-                        <Button
-                            onClick={cancel}
-                            style={{
-                                marginRight: 8,
+                            placement="bottomLeft"
+                            arrow={{
+                                pointAtCenter: true,
                             }}
                         >
-                            Hủy
-                        </Button>
-                    </span>
-                ) : (
-                    <Button
-                        style={{ width: "100px" }}
-                        disabled={editingKey !== ""}
-                        onClick={() => edit(record)}
-                        icon={<EditOutlined />}
-                    />
-                );
+                            <Space >
+                                <Button size='large' style={{ borderColor: '#1677ff', color: '#1677ff' }}>Thao tác</Button>
+                            </Space>
+                        </Dropdown>
+                    </div>
+                )
             },
         },
     ];
-    const mergedColumns = columns.map((col) => {
-        if (!col.editable) {
-            return col;
-        }
-        return {
-            ...col,
-            onCell: (record) => ({
-                record,
-                inputType: col.dataIndex === "quantity" ? "number" : "text",
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
-        };
-    });
-
-    const handleDeleteSingleProduct = async (data) => {
-        try {
-            let res = await userRequest.delete(`/mockTests/${data.id}`);
-            if (res.status === 200) {
-                navigate(0);
-            } else return useToastError("Xóa sản phẩm thất bại");
-        } catch (error) {
-            console.log(error);
-        }
-        setEditingKey("");
-    };
 
     useEffect(() => {
         setData(products);
@@ -315,7 +168,7 @@ export const AdminCRUD = (props) => {
                 setStats('Readings');
                 break;
             case 'grammars':
-                setStats('grammars');
+                setStats('Grammars');
                 break;
             case 'vocabularys':
                 setStats('Vocabularys');
@@ -384,16 +237,9 @@ export const AdminCRUD = (props) => {
             <Form form={form} component={false}>
                 <Table
                     rowKey={(record) => record + Math.floor(Math.random() * 1000)}
-                    components={{
-                        body: {
-                            cell: EditableCell,
-                        },
-                    }}
                     bordered
-                    //loading={isLoading}
                     dataSource={data}
-                    columns={mergedColumns}
-                    rowClassName="editable-row"
+                    columns={columns}
                     pagination={{
                         pageSize: pageSize,
                         current: page,

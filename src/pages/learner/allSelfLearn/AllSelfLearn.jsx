@@ -15,7 +15,7 @@ const AllSelfLearn = () => {
     const [stats, setStats] = useState([]);
     const navigate = useNavigate();
     const handleClick = (stat) => {
-        navigate(`/vocabulary/${stat}`);
+        navigate(`/vocabulary/${stat.topicName}`);
     };
     const getStats = async () => {
         try {
@@ -34,7 +34,7 @@ const AllSelfLearn = () => {
             <Topbar></Topbar>
             <TopMenu active={"vocabulary"}></TopMenu>
             <div className="allSelfLearnContainer">
-                <Card title={"Kho từ vựng theo chủ đề"} style={{ width: "65%", marginTop: 20, marginRight: 30 }}>
+                <Card title={"Kho từ vựng theo chủ đề"} style={{ width: "100%", marginTop: 20, marginRight: 'auto', marginLeft: 'auto' }}>
 
                     <div className="mocksContent">
                         <Row
@@ -55,8 +55,8 @@ const AllSelfLearn = () => {
                                         }
                                     >
                                         <Meta
-                                            title={stat}
-                                            description={`20 Từ vựng chủ đề ${stat}`}
+                                            title={stat.topicName}
+                                            description={`20 Từ vựng chủ đề ${stat.topicName}`}
                                         />
                                     </Card>
 
@@ -67,13 +67,6 @@ const AllSelfLearn = () => {
                     </div>
 
 
-                </Card>
-                <Card title="Bao Hieu" extra={<UserOutlined />} style={{ width: "35%", marginTop: 20 }} >
-                    <div className="text-content" style={{ backgroundColor: "#f1f2f4", borderRadius: 15, padding: 15 }}>
-                        <p>I can accept failure, everyone fails at something. But I can’t accept not trying.</p
-                        ><p>Tôi có thể chấp nhận thất bại, mọi người đều thất bại ở một việc gì đó. Nhưng tôi không chấp nhận việc không cố gắng.</p>
-                        <p className="text-right">– Michael Jordan</p>
-                    </div>
                 </Card>
             </div>
 

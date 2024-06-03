@@ -48,15 +48,15 @@ export const Part1 = (props) => {
     let images = props.images;
     return (
         <div>
-            <Card title={null} style={{ width: '98%', marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
-                <div className="part1-instruction">
+            <Card title={null} style={{ height: '100%', width: '100%', marginBottom: 60, backgroundColor: 'rgba(0, 0, 0, .03)' }}>
+                <div style={{ fontSize: 16 }} className="part1-instruction">
                     <b>Part 1.</b> For each question in this part, you will hear four statements about a picture in your test book. When you hear the statements, you must select the one statement that best describes what you see in the picture. Then find the number of the question on your answer sheet and mark your answer. The statements will not be printed in your test book and will be spoken only one time.
                 </div>
             </Card>
             {
                 props.images && images.slice(0, 6).map((image, index) => (
 
-                    <div className="part1-container" style={{ marginBottom: 50 }}>
+                    <div className="part1-container" style={{ marginBottom: 50 }} key={index}>
                         <div className="part1-title" style={{ fontWeight: 'bold', marginBottom: 10 }}>Question {index + 1}.</div>
                         <div className="part1-content" style={{
                             display: 'flex', flexDirection: 'row',
