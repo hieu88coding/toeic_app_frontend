@@ -29,15 +29,10 @@ const WrittingExam = () => {
                         <Card style={{ width: '100%', fontSize: 18 }}>
                             <div style={{ fontWeight: 700 }}>Directions:</div>
                             <div dangerouslySetInnerHTML={{
-                                __html: `<p><em>Read the e-mail.</em><br>
-From: George Pinkney<br>
-To: Social Committee members<br>
-Subject: Meeting<br>
-Sent: April 12, 20 -<br>
-It is time for a meeting of the Social Committee. We need to start planning the annual year-end party. I would like all members of the committee to meet next Friday morning from 9 to 11 in Conference Room A. Please let me know as soon as possible if you are available to attend this meeting.<br>
-Thank you.<br>
-George Pinkney<br>
-Social Committee Chair<br><em>Respond to the e-mail as if you are a member of the Social Committee. In your e-mail, explain ONE problem and make TWO suggestions.</em></p>` }}></div>                        </Card>
+                                __html: `<p><em>Read the e-mail.</em><br>From: George Pinkney<br>To: Social Committee members<br>Subject: Meeting<br>Sent: April 12, 20 -<br>It is time for a meeting of the Social Committee. We need to start planning the annual year-end party. I would like all members of the committee to meet next Friday morning from 9 to 11 in Conference Room A. Please let me know as soon as possible if you are available to attend this meeting.<br>Thank you.<br>George Pinkney<br>Social Committee Chair<br><em>Respond to the e-mail as if you are a member of the Social Committee. In your e-mail, explain ONE problem and make TWO suggestions.</em></p>`
+                            }}>
+                            </div>
+                        </Card>
 
                     </div>
                     <Card style={{ width: '100%', marginTop: '50px', height: 900 }}>

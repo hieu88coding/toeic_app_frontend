@@ -202,7 +202,7 @@ export const VocabTable = (props) => {
                                 type="primary"
                                 icon={<DeleteOutlined />}
                                 ghost
-                                onClick={() => viewDetailModal(record)}
+                                onClick={() => navigate(`/admin/${props.itemKey}/${record.topicName}`)}
                             >
                                 Xem chi tiết
                             </Button>

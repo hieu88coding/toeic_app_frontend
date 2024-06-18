@@ -36,13 +36,22 @@ import AllGrammarsPage from './pages/learner/grammarPage/AllGrammarsPage';
 import GrammarExam from './pages/learner/grammarPage/GrammarExam';
 import AllSpeaking from './pages/learner/speakingPage/AllSpeaking';
 import AllWritting from './pages/learner/writtingPage/AllWritting';
+import BlogPage from './pages/learner/blogPage/BlogPage';
+import SinglePostPage from './pages/learner/blogPage/SinglePostPage';
 function App() {
-
   return (
     <DataProvider>
       <BrowserRouter>
         <ToastContainer />
         <Routes>
+          <Route
+            exact path="/blog"
+            element={<BlogPage />}
+          />
+          <Route
+            exact path="/posts/:id"
+            element={<SinglePostPage />}
+          />
           <Route
             exact path="/grammars/:testName"
             element={<GrammarExam />}

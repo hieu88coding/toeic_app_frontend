@@ -25,8 +25,8 @@ import {
 } from "firebase/storage";
 import { storage } from '../../firebase';
 import axios from "axios";
-import CreateListening from '../../pages/admin/createLevel/CreateListening';
-import CreateReading from '../../pages/admin/createLevel/CreateReading';
+import CreateBlog from '../../pages/admin/createLevel/CreateBlog';
+
 const DeleteOneProductBtn = () => {
     return (
         <Button
@@ -42,7 +42,7 @@ const DeleteOneProductBtn = () => {
 };
 
 
-export const PartTable = (props) => {
+export const BlogTable = (props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const authUser = useAuthUser();
@@ -54,30 +54,7 @@ export const PartTable = (props) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    const partDetection = (partName) => {
-        switch (partName) {
-            case 'Part 1 - Mô tả tranh':
-                return 'part1'
-            case 'Part 2 - Hỏi & Đáp':
-                return 'part2'
-            case 'Part 3 - Đoạn hội thoại':
-                return 'part3'
-            case 'Part 4 - Bài nói ngắn':
-                return 'part4'
-            case 'Part 5 - Hoàn thành câu':
-                return 'part5'
-            case 'Part 6 - Hoàn thành đoạn văn':
-                return 'part6'
-            case 'Part 7 - Đoạn đơn':
-                return 'part71'
-            case 'Part 7 - Đoạn kép':
-                return 'part72'
-            case 'Part 7 - Đoạn ba':
-                return 'part73'
-            default:
-                return 'default'
-        }
-    }
+
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -204,18 +181,18 @@ export const PartTable = (props) => {
             ...getColumnSearchProps('id'),
         },
         {
-            title: 'Part',
-            dataIndex: 'partName',
-            key: 'partName',
-            width: '20%',
-            ...getColumnSearchProps('part'),
+            title: 'Tên chủ đề',
+            dataIndex: 'contentMarkdown',
+            key: 'contentMarkdown',
+            width: '30%',
+            ...getColumnSearchProps('contentMarkdown'),
         },
         {
-            title: 'Tên Test',
-            dataIndex: 'testName',
-            key: 'testName',
+            title: 'Tên bài viết',
+            dataIndex: 'title',
+            key: 'title',
             width: '30%',
-            ...getColumnSearchProps('answer'),
+            ...getColumnSearchProps('title'),
         },
         {
             dataIndex: "action",
@@ -230,7 +207,7 @@ export const PartTable = (props) => {
                                 type="primary"
                                 icon={<DeleteOutlined />}
                                 ghost
-                                onClick={() => navigate(`/admin/${props.itemKey}/${partDetection(record.partName)}/${record.testName}`)}
+                                onClick={() => navigate(`/admin/${props.itemKey}/${record.topicName}`)}
                             >
                                 Xem chi tiết
                             </Button>
@@ -277,26 +254,15 @@ export const PartTable = (props) => {
         <div>
             <div style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 50 }}>{testCode}</div>
 
-            {partState === 'listenings' &&
-                <CreateListening
-                    dataTest={data}
-                    testName={partState}
-                    style={{ textAlign: "center" }}
-                    isOpenModal={isOpen}
-                    handleOpenChange={handleOpenChange}
-                />
+            <CreateBlog
+                dataTest={data}
+                testName={partState}
+                style={{ textAlign: "center" }}
+                isOpenModal={isOpen}
+                handleOpenChange={handleOpenChange}
+            />
 
-            }
-            {partState === 'readings' &&
-                <CreateReading
-                    dataTest={data}
-                    testName={partState}
-                    style={{ textAlign: "center" }}
-                    isOpenModal={isOpen}
-                    handleOpenChange={handleOpenChange}
-                />
 
-            }
 
             <div style={{ marginBottom: 30, display: 'flex', justifyContent: 'flex-end' }} className="uploadExcelBtn">
                 <CustomizedMenus

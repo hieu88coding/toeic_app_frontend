@@ -19,7 +19,12 @@ import { MockTable } from '../../../components/adminTable/MockTable';
 import { PartTable } from '../../../components/adminTable/PartTable';
 import { SkillTable } from '../../../components/adminTable/SkillTable';
 import { VocabTable } from '../../../components/adminTable/VocabTable';
+import { BlogTable } from '../../../components/adminTable/BlogTable';
 import { GrammarTable } from '../../../components/adminTable/GrammarTable';
+import { ListeningsDetailTable } from '../../../components/adminTable/ListeningsDetailTable';
+import { ReadingsDetailTable } from '../../../components/adminTable/ReadingsDetailTable';
+import { GrammarDetailTable } from '../../../components/adminTable/GrammarDetailTable';
+import { VocabDetailTable } from '../../../components/adminTable/VocabDetailTable';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -121,18 +126,46 @@ const AdminDashboard = () => {
                                 <VocabTable itemKey={selectedMenuItem} />
                             </div>
                         }
+                        {testCode && partName === undefined && (testCode == 'blogs') &&
+                            <div>
+                                <BlogTable itemKey={selectedMenuItem} />
+                            </div>
+                        }
                         {testCode && partName === undefined && (testCode == 'grammars') &&
                             <div>
                                 <GrammarTable itemKey={selectedMenuItem} />
                             </div>
                         }
-                        {partName &&
+                        {partName && (testCode == 'mockTests') &&
                             <div>
                                 <MockTable itemKey={selectedMenuItem} />
                             </div>
 
                         }
+                        {partName && (testCode == 'grammars') &&
+                            <div>
+                                <GrammarDetailTable itemKey={selectedMenuItem} />
+                            </div>
 
+                        }
+                        {partName && (testCode == 'vocabularys') &&
+                            <div>
+                                <VocabDetailTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
+                        {partName && (testCode == 'listenings') &&
+                            <div>
+                                <ListeningsDetailTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
+                        {partName && (testCode == 'readings') &&
+                            <div>
+                                <ReadingsDetailTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
                     </div>
                 </Content>
 

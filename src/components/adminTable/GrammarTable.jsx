@@ -183,13 +183,6 @@ export const GrammarTable = (props) => {
             ...getColumnSearchProps('id'),
         },
         {
-            title: 'Part',
-            dataIndex: 'partName',
-            key: 'partName',
-            width: '20%',
-            ...getColumnSearchProps('part'),
-        },
-        {
             title: 'Tên Test',
             dataIndex: 'testName',
             key: 'testName',
@@ -209,7 +202,7 @@ export const GrammarTable = (props) => {
                                 type="primary"
                                 icon={<DeleteOutlined />}
                                 ghost
-                                onClick={() => viewDetailModal(record)}
+                                onClick={() => navigate(`/admin/${props.itemKey}/${record.testName}`)}
                             >
                                 Xem chi tiết
                             </Button>

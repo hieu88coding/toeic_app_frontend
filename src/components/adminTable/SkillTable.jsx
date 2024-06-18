@@ -27,7 +27,8 @@ import { storage } from '../../firebase';
 import axios from "axios";
 import CreateSpeaking from '../../pages/admin/createLevel/CreateSpeaking';
 import CreateWritting from '../../pages/admin/createLevel/CreateWritting';
-
+import SpeakingsDetailAdmin from '../adminDetailModal/SpeakingsDetailAdmin';
+import WrittingsDetailAdmin from '../adminDetailModal/WrittingsDetailAdmin';
 const DeleteOneProductBtn = () => {
     return (
         <Button
@@ -55,6 +56,7 @@ export const SkillTable = (props) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
+    const [modalData, setModalData] = useState([]);
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -173,6 +175,50 @@ export const SkillTable = (props) => {
     const handleOpenChange = (newValue) => {
         setIsOpen(newValue);
     };
+    const handleOpenModalChange = (newValue) => {
+        setIsModalOpen(newValue);
+    };
+    const viewDetailModal = async (record) => {
+        console.log(data);
+        console.log(record.testName);
+        if (data && data.length !== 0) {
+            if (partState === 'speakings') {
+                let audioRefs = await listAll(ref(storage, `Speakings/mp3/Part 1 - Đọc đoạn văn/${record.testName}`));
+                let audioUrls = await Promise.all(
+                    audioRefs.items.map(async (exelRef) => {
+                        const url = await getDownloadURL(exelRef); // Tải xuống từng ảnh
+                        return url;
+                    })
+                );
+                const tempModalData = [];
+                tempModalData.push({
+                    id: data[0].id,
+                    partName: 'part1',
+                    exel: data[0].pdf,
+                    audio: audioUrls[0],
+                    images: '',
+                    correctAnswer: '',
+                })
+                console.log(tempModalData);
+                setModalData(tempModalData[0]);
+                handleOpenModalChange(true);
+            } else {
+                const tempModalData2 = [];
+                tempModalData2.push({
+                    id: data[0].id,
+                    partName: 'part1',
+                    exel: data[0].pdf,
+                    audio: '',
+                    images: '',
+                    correctAnswer: '',
+                })
+                console.log(tempModalData2);
+                setModalData(tempModalData2[0]);
+                handleOpenModalChange(true);
+            }
+
+        }
+    }
     const columns = [
         {
             title: 'Số thứ tự',
@@ -282,6 +328,30 @@ export const SkillTable = (props) => {
                     isOpenModal={isOpen}
                 />
             </div>
+            {modalData !== undefined && modalData.length !== 0 && partState === "speakings" &&
+                <div>
+                    <SpeakingsDetailAdmin
+                        data={modalData}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isModalOpen}
+                        handleOpenModalChange={handleOpenModalChange}
+                        partEnglishName={'Part 1 - Đọc đoạn văn'}
+                    />
+                </div>
+            }
+            {modalData !== undefined && modalData.length !== 0 && partState === "writtings" &&
+                <div>
+                    <WrittingsDetailAdmin
+                        data={modalData}
+                        testName={props.itemKey}
+                        style={{ textAlign: "center" }}
+                        isOpenModal={isModalOpen}
+                        handleOpenModalChange={handleOpenModalChange}
+                        partEnglishName={'Part 1 - Đọc đoạn văn'}
+                    />
+                </div>
+            }
             <Table
                 rowKey={(record) => record + Math.floor(Math.random() * 10000)}
                 bordered
