@@ -47,14 +47,14 @@ const PartResultPage = () => {
                 setCurrentCounter(29)
                 break;
             case 'part72':
-                setPartEnglishName(10)
+                setCurrentCounter(10)
                 break;
             case 'part73':
-                setPartEnglishName(15)
+                setCurrentCounter(15)
                 break;
 
             default:
-                setPartEnglishName('default')
+                setCurrentCounter(0)
                 break;
         }
     }
@@ -100,6 +100,7 @@ const PartResultPage = () => {
         fetchData();
     }, [currentCounter]);
     const compareAnswers = (answers1, answers2, start, end) => {
+        console.log(answers2);
         let correctCount = 0;
         let wrongCount = 0;
         let skip = 0;
@@ -107,7 +108,7 @@ const PartResultPage = () => {
         if (answers1.length !== 0 && answers2 !== undefined) {
             for (let i = start; i <= end; i++) {
                 const key = (i + 1).toString();
-                if (answers1[key] === answers2[0][i].correctAnswer[1]) {
+                if (answers1[key] === answers2[0][i]?.correctAnswer[1]) {
                     correctCount++;
                     temp.push({
                         key: key,

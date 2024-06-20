@@ -25,6 +25,8 @@ import { ListeningsDetailTable } from '../../../components/adminTable/Listenings
 import { ReadingsDetailTable } from '../../../components/adminTable/ReadingsDetailTable';
 import { GrammarDetailTable } from '../../../components/adminTable/GrammarDetailTable';
 import { VocabDetailTable } from '../../../components/adminTable/VocabDetailTable';
+import { BlogDetailTable } from '../../../components/adminTable/BlogDetailTable';
+import AdminChart from '../adminChart/AdminChart';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -69,8 +71,9 @@ const AdminDashboard = () => {
                 minHeight: '100vh',
             }}
         >
+
             <Sider>
-                <div className="demo-logo-vertical" />
+
                 <Menu onSelect={handleMenuSelect} theme="dark" defaultSelectedKeys={testCode ? [`${testCode}`] : ['dashboard']} mode="inline" items={items} />
             </Sider>
             <Layout>
@@ -121,6 +124,11 @@ const AdminDashboard = () => {
                                 <AdminCRUD itemKey={selectedMenuItem} />
                             </div>
                         }
+                        {testCode && partName === undefined && (testCode == 'dashboard') &&
+                            <div>
+                                <AdminChart itemKey={selectedMenuItem} />
+                            </div>
+                        }
                         {testCode && partName === undefined && (testCode == 'vocabularys') &&
                             <div>
                                 <VocabTable itemKey={selectedMenuItem} />
@@ -163,6 +171,12 @@ const AdminDashboard = () => {
                         {partName && (testCode == 'readings') &&
                             <div>
                                 <ReadingsDetailTable itemKey={selectedMenuItem} />
+                            </div>
+
+                        }
+                        {partName && (testCode == 'blogs') &&
+                            <div>
+                                <BlogDetailTable itemKey={selectedMenuItem} />
                             </div>
 
                         }

@@ -185,6 +185,14 @@ const HomePage = () => {
             navigate(`/review/readings/${latestPart.testName}/${latestPart.partName}/${latestPart.id}`)
         }
     }
+    const handleReviewMock = () => {
+        const number = parseInt(latestPart.partName.slice(4));
+        if (number <= 4) {
+            navigate(`/review/listenings/${latestPart.testName}/${latestPart.partName}/${latestPart.id}`)
+        } else {
+            navigate(`/review/readings/${latestPart.testName}/${latestPart.partName}/${latestPart.id}`)
+        }
+    }
 
     useEffect(() => {
         fetchProfile();

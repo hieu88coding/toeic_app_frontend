@@ -9,7 +9,7 @@ import {
 import { Dropdown, Space } from 'antd';
 import baseAvatar from '../../assets/Sample_User_Icon.png'
 import { Link, useNavigate, useLocation } from "react-router-dom";
-
+import toeic88Logo from '../../assets/toeic88Logo.png'
 
 
 const items = [
@@ -50,7 +50,9 @@ export const AdminHeader = () => {
         <div className="adminHeaderContainer">
             <div className="adminHeaderBanner">
                 <div className="adminHeaderLogo">
-                    HieuCaoToeic88
+                    <div className="topBarLogo">
+                        <img style={{ maxWidth: 100, height: 'auto' }} src={toeic88Logo} />
+                    </div>
                 </div>
                 <div className="adminHeaderRight">
                     <div className="adminHeaderInfo">
