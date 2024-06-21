@@ -1,4 +1,4 @@
-import "./topbar.scss";
+import "./topBar.scss";
 import { useEffect, useState } from "react";
 import { useAuthUser } from "react-auth-kit";
 import {
