@@ -16,7 +16,7 @@ import {
     list,
 } from "firebase/storage";
 import { storage } from '../../../firebase';
-import { Part1 } from "../../../components/examParts/part1";
+import { Part1 } from "../../../components/examParts/Part1";
 import { Part2 } from "../../../components/examParts/Part2";
 import { Part3 } from "../../../components/examParts/Part3";
 import { Part4 } from "../../../components/examParts/Part4";
