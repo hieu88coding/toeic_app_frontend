@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef, forwardRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import "./ReadingPage.scss";
+import "./readingPage.scss";
 import { usePlyr } from "plyr-react";
 import Countdown from 'react-countdown';
 import "plyr-react/plyr.css";
