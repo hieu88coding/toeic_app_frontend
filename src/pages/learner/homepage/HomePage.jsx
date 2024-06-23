@@ -87,7 +87,8 @@ const HomePage = () => {
                 //     headers: { Authorization: `Bearer ${token}` }
                 // });
                 const response = await publicRequest.get('https://toeic-app-backend-j1c5.onrender.com/login/profile', {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true
                 });
                 console.log(response.data.user);
                 setUser(response.data.user);
