@@ -83,7 +83,10 @@ const HomePage = () => {
             const token = Cookies.get('x-auth-token');
             console.log(token);
             if (token) {
-                const response = await publicRequest.get('http://localhost:8080/login/profile', {
+                // const response = await publicRequest.get('http://localhost:8080/login/profile', {
+                //     headers: { Authorization: `Bearer ${token}` }
+                // });
+                const response = await publicRequest.get('https://toeic-app-backend-j1c5.onrender.com/login/profile', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 console.log(response.data.user);
