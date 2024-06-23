@@ -40,20 +40,38 @@ export const Topbar = () => {
         {
             type: 'divider',
         },
+        // {
+        //     key: '3',
+        //     label: (
+        //         <a target="_blank" rel="noopener noreferrer" href="http://localhost:5173/login">
+        //             Đăng xuất
+        //         </a>
+        //     ),
+        //     icon: <LogoutOutlined />
+        // },
         {
             key: '3',
             label: (
-                <a target="_blank" rel="noopener noreferrer" href="http://localhost:5173/login">
+                <a target="_blank" rel="noopener noreferrer" href="https://hieucao88toeic.netlify.app/login">
                     Đăng xuất
                 </a>
             ),
             icon: <LogoutOutlined />
         },
     ] : [
+        // {
+        //     key: '99',
+        //     label: (
+        //         <a target="_blank" rel="noopener noreferrer" href="http://localhost:5173/login">
+        //             Đăng nhập
+        //         </a>
+        //     ),
+        //     icon: <LoginOutlined />
+        // }
         {
             key: '99',
             label: (
-                <a target="_blank" rel="noopener noreferrer" href="http://localhost:5173/login">
+                <a target="_blank" rel="noopener noreferrer" href="https://hieucao88toeic.netlify.app/login">
                     Đăng nhập
                 </a>
             ),
