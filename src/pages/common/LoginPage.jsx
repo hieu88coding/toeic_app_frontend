@@ -31,7 +31,8 @@ function LoginPage() {
 
   const handleFacebookLogin = async () => {
     try {
-      window.location.href = 'http://localhost:8080/login/auth/facebook';
+      //window.location.href = 'http://localhost:8080/login/auth/facebook';
+      window.location.href = 'https://toeic-app-backend-j1c5.onrender.com/login/auth/facebook';
     } catch (error) {
       console.log(error);
     }
@@ -39,7 +40,8 @@ function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      window.location.href = 'http://localhost:8080/login/auth/google';
+      //window.location.href = 'http://localhost:8080/login/auth/google';
+      window.location.href = 'https://toeic-app-backend-j1c5.onrender.com/login/auth/google';
     } catch (error) {
       console.log(error);
     }
