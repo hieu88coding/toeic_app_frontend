@@ -22,9 +22,8 @@ function LoginPage() {
   const location = useLocation();
   const signIn = useSignIn();
   useEffect(() => {
-    let token = Cookies.get('x-auth-token');
+    let token = localStorage.getItem('x-auth-token');
     if (token) {
-      Cookies.remove('x-auth-token');
       localStorage.removeItem('userInfo')
     }
   }, []);
