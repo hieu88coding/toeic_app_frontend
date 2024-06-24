@@ -79,24 +79,24 @@ const HomePage = () => {
         }
     }
     const fetchProfile = async () => {
-        try {
-            const token = Cookies.get('x-auth-token');
-            console.log(token);
-            if (token) {
-                // const response = await publicRequest.get('http://localhost:8080/login/profile', {
-                //     headers: { Authorization: `Bearer ${token}` }
-                // });
-                const response = await publicRequest.get('https://toeic-app-backend-j1c5.onrender.com/login/profile', {
-                    headers: { Authorization: `Bearer ${token}` },
-                    withCredentials: true
-                });
-                console.log(response.data.user);
-                setUser(response.data.user);
-                localStorage.setItem('userInfo', JSON.stringify(response.data.user))
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     const token = Cookies.get('x-auth-token');
+        //     console.log(token);
+        //     if (token) {
+        //         // const response = await publicRequest.get('http://localhost:8080/login/profile', {
+        //         //     headers: { Authorization: `Bearer ${token}` }
+        //         // });
+        //         const response = await publicRequest.get('https://toeic-app-backend-j1c5.onrender.com/login/profile', {
+        //             headers: { Authorization: `Bearer ${token}` },
+        //             withCredentials: true
+        //         });
+        //         console.log(response.data.user);
+        //         setUser(response.data.user);
+        //         localStorage.setItem('userInfo', JSON.stringify(response.data.user))
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        // }
     };
     const navigate = useNavigate();
     const getListenings = async () => {

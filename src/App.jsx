@@ -38,12 +38,17 @@ import AllSpeaking from './pages/learner/speakingPage/AllSpeaking';
 import AllWritting from './pages/learner/writtingPage/AllWritting';
 import BlogPage from './pages/learner/blogPage/BlogPage';
 import SinglePostPage from './pages/learner/blogPage/SinglePostPage';
+import AuthCallback from './pages/common/AuthCallBack';
 function App() {
   return (
     <DataProvider>
       <BrowserRouter>
         <ToastContainer />
         <Routes>
+          <Route
+            path="/auth-callback/*"
+            element={<AuthCallback />}
+          />
           <Route
             exact path="/blog"
             element={<BlogPage />}
