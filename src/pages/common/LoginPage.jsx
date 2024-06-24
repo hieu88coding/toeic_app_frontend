@@ -25,6 +25,7 @@ function LoginPage() {
     let token = localStorage.getItem('x-auth-token');
     if (token) {
       localStorage.removeItem('userInfo')
+      localStorage.removeItem('x-auth-token')
     }
   }, []);
 
